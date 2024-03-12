@@ -1,387 +1,84 @@
   {
 	"__note__": "01/2022 : Final version for setups with fixed sowing dates, automatic harvest dates and phenology calibrated to DWD data. Adapted from HERMES2Go, BBG Project",
 	"crops": {
-		"WW_dwd": {
-			"is-winter-crop": true,
+		"RYE": {
+			"is-winter-crop": false,
 			"cropParams": {
-				"species": ["include-from-file", "crops/species/wheat.json"],
-				"cultivar": ["include-from-file", "crops/cultivars/winter-wheat_bs_dwd_pheno.json"]
+				"species": ["include-from-file", "crops/species/Grass_Species4.json"],
+				"cultivar": ["include-from-file", "crops/cultivars/Grass_CLV4.json"]
 			},
-			"residueParams": ["include-from-file", "crops/residues/wheat.json"]
-		},
-		"WB_dwd": {
-			"is-winter-crop": true,
-			"cropParams": {
-				"species": ["include-from-file", "crops/species/barley.json"],
-				"cultivar": ["include-from-file", "crops/cultivars/winter-barley_bs_dwd_pheno.json"]
-			},
-			"residueParams": ["include-from-file", "crops/residues/barley.json"]
-		},
-		"WR_dwd": {
-			"is-winter-crop": true,
-			"cropParams": {
-				"species": ["include-from-file", "crops/species/rye.json"],
-				"cultivar": ["include-from-file", "crops/cultivars/winter-rye_hhf_dwd_pheno.json"]
-			},
-			"residueParams": ["include-from-file", "crops/residues/rye.json"]
-		},
-		"SB_dwd": {
-			"is-winter-crop": true,
-			"cropParams": {
-				"species": ["include-from-file", "crops/species/barley.json"],
-				"cultivar": ["include-from-file", "crops/cultivars/spring-barley_hhf_dwd_pheno.json"]
-			},
-			"residueParams": ["include-from-file", "crops/residues/barley.json"]
-		},
-		"WRa_dwd": {
-			"is-winter-crop": true,
-			"cropParams": {
-				"species": ["include-from-file", "crops/species/rape.json"],
-				"cultivar": ["include-from-file", "crops/cultivars/winter-rape_dwd_pheno.json"]
-			},
-			"residueParams": ["include-from-file", "crops/residues/rape.json"]
-		},
-		"SM_dwd": {
-			"is-winter-crop": true,
-			"cropParams": {
-				"species": ["include-from-file", "crops/species/maize.json"],
-				"cultivar": ["include-from-file", "crops/cultivars/silage-maize_bs_dwd_pheno.json"]
-			},
-			"residueParams": ["include-from-file", "crops/residues/maize.json"]
-		},
-		"SU_dwd": {
-			"is-winter-crop": true,
-			"cropParams": {
-				"species": ["include-from-file", "crops/species/sugar-beet.json"],
-				"cultivar": ["include-from-file", "crops/cultivars/sugar-beet_bs_dwd_pheno.json"]
-			},
-			"residueParams": ["include-from-file", "crops/residues/beet.json"]
-		},
-		"PO": {
-			"is-winter-crop": true,
-			"cropParams": {
-				"species": ["include-from-file", "crops/species/potato.json"],
-				"cultivar": ["include-from-file", "crops/cultivars/moderately-early-potato.json"]
-			},
-			"residueParams": ["include-from-file", "crops/residues/potato.json"]
+			"residueParams": ["include-from-file", "crops/residues/grass-ley.json"]
 		}
 	},
-	"fert-params": {
-		"AN": ["include-from-file", "mineral-fertilisers/AN.json"],
-		"U": ["include-from-file", "mineral-fertilisers/U.json"],
-		"CAM": ["include-from-file", "organic-fertilisers/CAM.json"]
-	}, 	
-	"cropRotationTemplates": {
-		"WW_sfix_hauto": [{
+  
+	"cropRotationTemplates": [{
 			"worksteps": [
 				{
-					"date": "0000-09-22", "type": "Sowing", "crop": ["ref", "crops", "WW_dwd"] 
+					"date": "0000-03-01", "type": "Sowing", "crop": ["ref", "crops", "RYE"] 
 				},
 				{
-					"type": "NDemandFertilization",
-					"days": 60,
-					"after": "Sowing",
-					"N-demand": [40.0, "kg"],
-					"depth": [0.3, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
+					"date": "0000-06-15",
+					"type": "Cutting",
+					"organs": {
+						"Leaf": [
+							0.15,
+							"m2 m-2",
+							"left"],
+						"Shoot": [
+							100,
+							"kg ha-1",
+							"left"],
+					},
+					"export": {
+						"Leaf": [
+							100,
+							"%"
+						],
+						"Shoot": [
+							100,
+							"%"
+						],
+						"Fruit": [
+							0,
+							"%"
+						]
+					}
 				},
-				{
-					"type": "NDemandFertilization",
-					"days": 120,
-					"after": "Sowing",
-					"N-demand": [80.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				},
-				{
-					"type": "NDemandFertilization",
-					"days": 150,
-					"after": "Sowing",
-					"N-demand": [40.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				},
-				{ 
-					"type": "AutomaticHarvest", 
-					"latest-date": "0001-09-05",
-					"min-%-asw": 0,
-					"max-%-asw": 99.0,
-					"max-3d-precip-sum": 2,
-					"max-curr-day-precip": 0.1,
-					"harvest-time": "maturity"
-				},
-				{
-					"type": "OrganicFertilization",
-					"days": 1,
-					"after": "Harvest",
-					"amount": [15000, "kg N"],
-					"parameters": ["include-from-file", "organic-fertilisers/CAM.json"],
-					"incorporation": true
+								{
+					"date": "0000-09-15",
+					"type": "Cutting",
+					"organs": {
+						"Leaf": [
+							0.4,
+							"m2 m-2",
+							"left"],
+						"Shoot": [
+							100,
+							"kg ha-1",
+							"left"],
+					},
+					"export": {
+						"Leaf": [
+							100,
+							"%"
+						],
+						"Shoot": [
+							100,
+							"%"
+						],
+						"Fruit": [
+							0,
+							"%"
+						]
+					}
 				}
 			]
-		}],
-		"WB_sfix_hauto": [{
-			"worksteps": [
-				{
-					"date": "0000-09-22", "type": "Sowing", "crop": ["ref", "crops", "WB_dwd"] 
-				},
-				{
-					"type": "NDemandFertilization",
-					"days": 55,
-					"after": "Sowing",
-					"N-demand": [50.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				  },
-				  {
-					"type": "NDemandFertilization",
-					"days": 150,
-					"after": "Sowing",
-					"N-demand": [90.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				  },
-				{ 
-					"type": "AutomaticHarvest", 
-					"latest-date": "0001-09-05",
-					"min-%-asw": 0,
-					"max-%-asw": 99.0,
-					"max-3d-precip-sum": 2,
-					"max-curr-day-precip": 0.1,
-					"harvest-time": "maturity"
-				}
-			]
-		}],
-		"WR_sfix_hauto": [{
-			"worksteps": [
-				{
-					"date": "0000-09-22", "type": "Sowing", "crop": ["ref", "crops", "WR_dwd"] 
-				},
-				{
-					"type": "NDemandFertilization",
-					"days": 55,
-					"after": "Sowing",
-					"N-demand": [50.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				  },
-				  {
-					"type": "NDemandFertilization",
-					"days": 150,
-					"after": "Sowing",
-					"N-demand": [90.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				  },
-				{ 
-					"type": "AutomaticHarvest", 
-					"latest-date": "0001-09-05",
-					"min-%-asw": 0,
-					"max-%-asw": 99.0,
-					"max-3d-precip-sum": 2,
-					"max-curr-day-precip": 0.1,
-					"harvest-time": "maturity"
-				}
-			]
-		}],
-		"SB_sfix_hauto": [{
-			"worksteps": [
-				{
-					"date": "0000-03-01", "type": "Sowing", "crop": ["ref", "crops", "SB_dwd"] 
-				},
-				{
-					"type": "NDemandFertilization",
-					"days": 55,
-					"after": "Sowing",
-					"N-demand": [50.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				  },
-				  {
-					"type": "NDemandFertilization",
-					"days": 150,
-					"after": "Sowing",
-					"N-demand": [90.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				  },
-				{ 
-					"type": "AutomaticHarvest", 
-					"latest-date": "0000-09-07",
-					"min-%-asw": 0,
-					"max-%-asw": 99.0,
-					"max-3d-precip-sum": 2,
-					"max-curr-day-precip": 0.1,
-					"harvest-time": "maturity"
-				}
-			]
-		}],
-		"WRa_sfix_hauto": [{
-			"worksteps": [
-				{
-					"date": "0000-09-22", "type": "Sowing", "crop": ["ref", "crops", "WRa_dwd"]
-				},
-				{
-					"type": "NDemandFertilization",
-					"days": 1,
-					"after": "Sowing",
-					"N-demand": [55.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				  },
-				  {
-					"type": "NDemandFertilization",
-					"days": 60,
-					"after": "Sowing",
-					"N-demand": [75.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				  },
-				{
-					"type": "NDemandFertilization",
-					"days": 120,
-					"after": "Sowing",
-					"N-demand": [40.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				  },
-				{
-					"type": "AutomaticHarvest",
-					"latest-date": "0001-08-15",
-					"min-%-asw": 0,
-					"max-%-asw": 99.0,
-					"max-3d-precip-sum": 2,
-					"max-curr-day-precip": 0.1,
-					"harvest-time": "maturity"
-				}
-			]
-		}],
-		"SM_sfix_hauto": [{
-			"worksteps": [
-				{
-					"date": "0000-03-31", "type": "Sowing", "crop": ["ref", "crops", "SM_dwd"]
-				},
-				{
-					"type": "NDemandFertilization",
-					"days": 1,
-					"after": "Sowing",
-					"N-demand": [110.0, "kg"],
-					"depth": [0.3, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				},
-				{
-					"type": "NDemandFertilization",
-					"days": 30,
-					"after": "Sowing",
-					"N-demand": [105.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				},
-				{
-					"type": "AutomaticHarvest",
-					"latest-date": "0000-10-31",
-					"min-%-asw": 0,
-					"max-%-asw": 99.0,
-					"max-3d-precip-sum": 5,
-					"max-curr-day-precip": 0.5,
-					"harvest-time": "maturity"
-				},
-				{
-					"type": "OrganicFertilization",
-					"days": 1,
-					"after": "Harvest",
-					"amount": [15000, "kg"],
-					"parameters": ["include-from-file", "organic-fertilisers/CAM.json"],
-					"incorporation": true
-				  }
-			]
-		}],
-		"SU_sfix_hauto": [{
-			"worksteps": [
-				{
-					"date": "0000-04-01", "type": "Sowing", "crop": ["ref", "crops", "SU_dwd"]
-				},
-				{
-					"type": "NDemandFertilization",
-					"days": 60,
-					"after": "Sowing",
-					"N-demand": [40.0, "kg"],
-					"depth": [0.3, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				},
-				{
-					"type": "NDemandFertilization",
-					"days": 120,
-					"after": "Sowing",
-					"N-demand": [80.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				},
-				{
-					"type": "NDemandFertilization",
-					"days": 150,
-					"after": "Sowing",
-					"N-demand": [40.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				},
-				{
-					"type": "AutomaticHarvest",
-					"latest-date": "0000-10-25",
-					"min-%-asw": 0,
-					"max-%-asw": 99.0,
-					"max-3d-precip-sum": 5,
-					"max-curr-day-precip": 0.5,
-					"harvest-time": "maturity"
-				}
-			]
-		}],
-		"PO_sfix_hauto": [{
-			"worksteps": [
-				{
-					"date": "0000-04-01", "type": "Sowing", "crop": ["ref", "crops", "PO"]
-				},
-				{
-					"type": "NDemandFertilization",
-					"days": 60,
-					"after": "Sowing",
-					"N-demand": [40.0, "kg"],
-					"depth": [0.3, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				},
-				{
-					"type": "NDemandFertilization",
-					"days": 120,
-					"after": "Sowing",
-					"N-demand": [80.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				},
-				{
-					"type": "NDemandFertilization",
-					"days": 150,
-					"after": "Sowing",
-					"N-demand": [40.0, "kg"],
-					"depth": [0.9, "m"],
-					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
-				},
-				{
-					"type": "AutomaticHarvest",
-					"latest-date": "0000-09-15",
-					"min-%-asw": 0,
-					"max-%-asw": 99.0,
-					"max-3d-precip-sum": 5,
-					"max-curr-day-precip": 0.5,
-					"harvest-time": "maturity"
-				}
-			]
-		}]
-	},
+	}
+	],
 
-	"cropRotation": ["ref", "cropRotationTemplates", "WW"],
+	"cropRotation": ["ref", "cropRotationTemplates", "RYE"],
 	
 	"CropParameters": {
-		"=": ["include-from-file", "general/crop.json"],
-		"__enable_vernalisation_factor_fix__": true
+		"=": ["include-from-file", "general/crop.json"]
 	}
 }
