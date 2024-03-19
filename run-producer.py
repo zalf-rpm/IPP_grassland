@@ -256,7 +256,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     def create_mask_from_shapefile(NUTS1_REGIONS, region_name, path_to_soil_grid):
         regions_df = gpd.read_file(NUTS1_REGIONS)
-        region = regions_df[regions_df["NUTS_NAME"] == state_name]
+        region = regions_df[regions_df["NUTS_NAME"] == region_name]
 
         # This is needed to read the transformation data correctly from the file. With the original opening it does not work
         with rasterio.open(path_to_soil_grid) as dataset:
