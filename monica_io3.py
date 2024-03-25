@@ -69,7 +69,7 @@ def op_to_string(op):
         OP_NONE: "NONE",
         OP_UNDEFINED_OP_: "undef"
     }.get(op, "undef")
-
+    
 
 def organ_to_string(organ):
     return {
@@ -331,16 +331,16 @@ def supported_patterns():
          and is_string_type(j[1]) \
          and is_string_type(j[2]):
 
-            key1 = j[1]
-            key2 = j[2]
+            key = j[1]
+          
 
-            if CACHE_REFS and (key1, key2) in ref.cache:
-                return ref.cache[(key1, key2)]
+            if CACHE_REFS and (key) in ref.cache:
+                return ref.cache[(key)]
 
-            res = find_and_replace_references(root[key1], root[key2])
+            res = find_and_replace_references(root[key])
             
             if CACHE_REFS:
-                ref.cache[(key1, key2)] = res
+                ref.cache[(key)] = res
             return res
 
         return {"result": j,
