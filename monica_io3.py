@@ -337,7 +337,7 @@ def supported_patterns():
             if CACHE_REFS and (key1, key2) in ref.cache:
                 return ref.cache[(key1, key2)]
 
-            res = find_and_replace_references(root, root[key1][key2])
+            res = find_and_replace_references(root[key1], root[key2])
             
             if CACHE_REFS:
                 ref.cache[(key1, key2)] = res
