@@ -37,7 +37,6 @@ from rasterio import features
 import monica_io3
 import soil_io3
 import monica_run_lib as Mrunlib
-from irrigation_manager import IrrigationManager
 
 PATHS = {
     # adjust the local path to your environment
@@ -248,9 +247,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     irrigation_grid = np.loadtxt(path_to_irrigation_grid, dtype=int, skiprows=6)
     irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata, False)
     print("read: ", path_to_irrigation_grid)
-
-    # initialize irrigation manager
-    irrigation_manager = IrrigationManager("irrigated_crops.json")
 
     # Create the function for the mask. This function will later use the additional column in a setup file!
 
@@ -672,20 +668,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 env_template["params"]["simulationParameters"]["UseNMinMineralFertilisingMethod"] = setup[
                     "fertilization"]
 
-                # set UseAutomaticIrrigation to True if irrigation setup is True and irrigation is 1
-                if setup["irrigation"] and irrigation == 1:
-                    # check if the crop type is in the irrigated crops map
-                    if irrigation_manager.should_be_irrigated_by_crop_id()(setup["crop-id"]):
-                        env_template["params"]["simulationParameters"]["UseAutomaticIrrigation"] = True
-                        # add default values for irrigation amount and threshold
-                        env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"] = [10, "mm"]
-                        env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["threshold"] = 0.3
-                    else:
-                        env_template["params"]["simulationParameters"]["UseAutomaticIrrigation"] = False
-                        # reset irrigation amount and threshold
-                        env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"] = [0, "mm"]
-                        env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["threshold"] = 0.9
-
                 env_template["params"]["simulationParameters"]["NitrogenResponseOn"] = setup["NitrogenResponseOn"]
                 env_template["params"]["simulationParameters"]["WaterDeficitResponseOn"] = setup[
                     "WaterDeficitResponseOn"]
@@ -755,7 +737,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             print("WARNING: Row ", (sent_env_count - 1), " already exists")
             # print("unknown_soil_ids:", unknown_soil_ids)
 
-        if env_template and is_sensitivity_analysis:
+        if env_template:
             env_template["pathToClimateCSV"] = ""
             env_template["customId"] = {
                 "setup_id": setup_id,
