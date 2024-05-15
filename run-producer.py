@@ -350,9 +350,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         crop_json["CropParameters"]["__enable_vernalisation_factor_fix__"] = setup[
             "use_vernalisation_fix"] if "use_vernalisation_fix" in setup else False
 
-        # set the current crop used for this run id
-        crop_json["cropRotation"][2] = crop_id
-
         # create environment template from json templates
         env_template = monica_io3.create_env_json_from_json_config({
             "crop": crop_json,
