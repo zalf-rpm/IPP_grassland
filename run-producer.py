@@ -378,16 +378,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         # cs__ = open("coord_mapping_etrs89-utm32n_to_wgs84-latlon.csv", "w")
         # cs__.write("row,col,center_25832_etrs89-utm32n_r,center_25832_etrs89-utm32n_h,center_lat,center_lon\n")
 
-        # for sensitivity analysis mode
-        is_sensitivity_analysis = False
-        orig_params = None
-        if setup["species_param_name"]:
-            if not orig_params:
-                orig_params = copy.deepcopy(env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"])
-        elif setup["cultivar_param_name"]:
-            if not orig_params:
-                orig_params = copy.deepcopy(env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"])
-
         for srow in range(0, srows):
             print(srow, end=", ")
 
@@ -407,37 +397,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 # inter = crow/ccol encoded into integer
                 crow, ccol = climate_data_interpolator(sr, sh)
 
-                # OW: clim4cast sensitivity analysis
-                p_value = p_name = params = None
-                if setup["species_param_name"]:
-                    params = env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"]
-                    p_name = setup["species_param_name"]
-                elif setup["cultivar_param_name"]:
-                    params = env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"]
-                    p_name = setup["cultivar_param_name"]
-                if setup["coeff"] and p_name and params and orig_params:
-                    # Case 3: List with a coefficient
-                    coefficient = float(setup["coeff"])
-                    is_sensitivity_analysis = True
-                    if type(orig_params[p_name]) is list and len(orig_params[p_name]) > 0:
-                        if type(orig_params[p_name][0]) is list:
-                            params[p_name][0] = list([float(val) * coefficient for val in orig_params[p_name][0]])
-                        else:
-                            params[p_name] = list([float(val) * coefficient for val in orig_params[p_name]])
-                elif setup["param_value"]:
-                    # Case 1: Single value or Case 2: List without coefficient
-                    p_value = float(setup["param_value"])
-                    is_sensitivity_analysis = True
-                    if params and p_name:
-                        if setup["param_index_in_array"]:
-                            i = int(setup["param_index_in_array"])
-                            if type(params[p_name][0]) is list:
-                                params[p_name][0][i] = p_value
-                            else:
-                                params[p_name][i] = p_value
-                        else:
-                            params[p_name] = p_value
-
                 crop_grid_id = int(crop_grid[srow, scol])
                 # print(crop_grid_id)
                 if crop_grid_id != 1 or soil_id == -8888:
@@ -449,9 +408,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                         "soil_id": soil_id,
                         "env_id": sent_env_count,
                         "nodata": True,
-                        "is_sensitivity_analysis": is_sensitivity_analysis,
                     }
-                    if not is_sensitivity_analysis and not DEBUG_DONOT_SEND:
+                    if not DEBUG_DONOT_SEND:
                         socket.send_json(env_template)
                         # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
                         sent_env_count += 1
@@ -613,9 +571,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                         "soil_id": soil_id,
                         "env_id": sent_env_count,
                         "nodata": True,
-                        "is_sensitivity_analysis": is_sensitivity_analysis
                     }
-                    if not is_sensitivity_analysis and not DEBUG_DONOT_SEND:
+                    if and not DEBUG_DONOT_SEND:
                         socket.send_json(env_template)
                         # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
                         sent_env_count += 1
@@ -749,27 +706,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 env_template["pathToClimateCSV"] = [
                     paths["monica-path-to-climate-dir"] + setup["climate_path_to_csvs"] + "/" + subpath_to_csv]
                 if setup["incl_hist"]:
-
-                    if rcm[:3] == "UHO":
-                        hist_subpath_to_csv = TEMPLATE_PATH_CLIMATE_CSV.format(gcm=gcm, rcm="CLMcom-CCLM4-8-17",
-                                                                               scenario="historical", ensmem=ensmem,
-                                                                               version=version, crow=str(crow),
-                                                                               ccol=str(ccol))
-                        for _ in range(4):
-                            hist_subpath_to_csv = hist_subpath_to_csv.replace("//", "/")
-                        env_template["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
-                            "climate_path_to_csvs"] + "/" + hist_subpath_to_csv)
-
-                    elif rcm[:3] == "SMH":
-                        hist_subpath_to_csv = TEMPLATE_PATH_CLIMATE_CSV.format(gcm=gcm, rcm="CLMcom-CCLM4-8-17",
-                                                                               scenario="historical", ensmem=ensmem,
-                                                                               version=version, crow=str(crow),
-                                                                               ccol=str(ccol))
-                        for _ in range(4):
-                            hist_subpath_to_csv = hist_subpath_to_csv.replace("//", "/")
-                        env_template["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
-                            "climate_path_to_csvs"] + "/" + hist_subpath_to_csv)
-
                     hist_subpath_to_csv = TEMPLATE_PATH_CLIMATE_CSV.format(gcm=gcm, rcm=rcm, scenario="historical",
                                                                            ensmem=ensmem, version=version,
                                                                            crow=str(crow), ccol=str(ccol))
@@ -787,9 +723,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     "crow": int(crow), "ccol": int(ccol),
                     "soil_id": soil_id,
                     "env_id": sent_env_count,
-                    "is_sensitivity_analysis": is_sensitivity_analysis,
-                    "param_name": p_name,
-                    "param_value": p_value,
                     "nodata": False
                 }
 
@@ -830,7 +763,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
             env_template["customId"] = {
                 "setup_id": setup_id,
                 "no_of_sent_envs": sent_env_count,
-                "is_sensitivity_analysis": is_sensitivity_analysis,
             }
             socket.send_json(env_template)
 

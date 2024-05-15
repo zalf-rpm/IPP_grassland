@@ -293,15 +293,6 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
         "datacell-count": datacells_per_row.copy(),
         "next-row": start_row
     })
-    setup_id_to_sensitivity_data = defaultdict(lambda: {
-        "year_to_yields": defaultdict(list),
-        "year_to_abbiom": defaultdict(list),
-        "envs_received": 0,
-        "no_of_envs_expected": None,
-        "out_dir_exists": False,
-        "param_name": None,
-        "param_value": None
-    })
 
     def process_message(msg):
         if len(msg["errors"]) > 0:
@@ -318,133 +309,72 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
             custom_id = msg["customId"]
             setup_id = custom_id["setup_id"]
 
-            if custom_id["is_sensitivity_analysis"]:
-                sdata = setup_id_to_sensitivity_data[setup_id]
+            is_nodata = custom_id["nodata"]
+            data = setup_id_to_data[setup_id]
 
-                print("received result custom_id:", custom_id)
+            row = custom_id["srow"]
+            col = custom_id["scol"]
+            # crow = custom_id.get("crow", -1)
+            # ccol = custom_id.get("ccol", -1)
+            # soil_id = custom_id.get("soil_id", -1)
 
-                param_name = param_value = None
-                if "no_of_sent_envs" in custom_id:
-                    sdata["no_of_envs_expected"] = custom_id["no_of_sent_envs"]
-                else:
-                    sdata["envs_received"] += 1
-
-                    if not sdata["param_name"]:
-                        sdata["param_name"] = custom_id["param_name"]
-                    if not sdata["param_value"]:
-                        sdata["param_value"] = custom_id["param_value"]
-
-                    for data in msg.get("data", []):
-                        results = data.get("results", [])
-                        for vals in results:
-                            if "Year" in vals:
-                                sdata["year_to_yields"][int(vals["Year"])].append(vals["Yield"])
-                                sdata["year_to_abbiom"][int(vals["Year"])].append(vals["AbBiom"])
-
-                if sdata["no_of_envs_expected"] == sdata["envs_received"]:
-                    path_to_out_dir = config["out"]  # + str(setup_id) + "/"
-                    print(path_to_out_dir)
-                    if not sdata["out_dir_exists"]:
-                        if os.path.isdir(path_to_out_dir) and os.path.exists(path_to_out_dir):
-                            sdata["out_dir_exists"] = True
-                        else:
-                            try:
-                                os.makedirs(path_to_out_dir)
-                                sdata["out_dir_exists"] = True
-                            except OSError:
-                                print("c: Couldn't create dir:", path_to_out_dir, "! Exiting.")
-                                exit(1)
-
-                        year_to_avg_values = defaultdict(dict)
-                        for key, name in {
-                            "year_to_yields": "yield",
-                            "year_to_abbiom": "abbiom"}.items():
-                            for year, values in sdata[key].items():
-                                no_of_values = len(values)
-                                if no_of_values > 0:
-                                    year_to_avg_values[year][name] = round(sum(values) / no_of_values, 2)
-
-                        path_to_out_file = f"{path_to_out_dir}/setup-{setup_id}_sensitivity.csv"
-                        with open(path_to_out_file, "a") as _:
-                            _.write(f"Year, Yield, AbBiom, {sdata['param_name']}\n")
-                            for year, avg_vals in year_to_avg_values.items():
-                                _.write(f"{year}, {avg_vals['yield']}, {avg_vals['abbiom']}, {sdata['param_value']}\n")
-
-                    print("last expected env received")
-
-                    # reset and wait for next round
-                    sdata["year_to_yields"].clear()
-                    sdata["year_to_abbiom"].clear()
-                    sdata["no_of_envs_expected"] = None
-                    sdata["envs_received"] = 0
-
+            debug_msg = "received work result " + str(process_message.received_env_count) + " customId: " + str(
+                msg.get("customId", "")) \
+                        + " next row: " + str(data["next-row"]) \
+                        + " cols@row to go: " + str(data["datacell-count"][row]) + "@" + str(
+                row) + " cells_per_row: " + str(datacells_per_row[row])  # \
+            # + " rows unwritten: " + str(data["row-col-data"].keys())
+            print(debug_msg)
+            # debug_file.write(debug_msg + "\n")
+            if is_nodata:
+                data["row-col-data"][row][col] = -9999
             else:
-                is_nodata = custom_id["nodata"]
-                data = setup_id_to_data[setup_id]
+                data["row-col-data"][row][col].append(create_output(msg))
+            data["datacell-count"][row] -= 1
 
-                row = custom_id["srow"]
-                col = custom_id["scol"]
-                # crow = custom_id.get("crow", -1)
-                # ccol = custom_id.get("ccol", -1)
-                # soil_id = custom_id.get("soil_id", -1)
+            process_message.received_env_count = process_message.received_env_count + 1
 
-                debug_msg = "received work result " + str(process_message.received_env_count) + " customId: " + str(
-                    msg.get("customId", "")) \
-                            + " next row: " + str(data["next-row"]) \
-                            + " cols@row to go: " + str(data["datacell-count"][row]) + "@" + str(
-                    row) + " cells_per_row: " + str(datacells_per_row[row])  # \
-                # + " rows unwritten: " + str(data["row-col-data"].keys())
+            while (data["next-row"] in data["row-col-data"] and data["datacell-count"][data["next-row"]] == 0) \
+                    or (
+                    len(data["datacell-count"]) > data["next-row"] and data["datacell-count"][data["next-row"]] == 0):
+
+                path_to_out_dir = config["out"] + str(setup_id) + "/"
+                path_to_csv_out_dir = config["csv-out"] + str(setup_id) + "/"
+                print(path_to_out_dir)
+                if not data["out_dir_exists"]:
+                    if os.path.isdir(path_to_out_dir) and os.path.exists(path_to_out_dir):
+                        data["out_dir_exists"] = True
+                    else:
+                        try:
+                            os.makedirs(path_to_out_dir)
+                            data["out_dir_exists"] = True
+                        except OSError:
+                            print("c: Couldn't create dir:", path_to_out_dir, "! Exiting.")
+                            exit(1)
+                    if os.path.isdir(path_to_csv_out_dir) and os.path.exists(path_to_csv_out_dir):
+                        data["out_dir_exists"] = True
+                    else:
+                        try:
+                            os.makedirs(path_to_csv_out_dir)
+                            data["out_dir_exists"] = True
+                        except OSError:
+                            print("c: Couldn't create dir:", path_to_csv_out_dir, "! Exiting.")
+                            exit(1)
+
+                write_row_to_grids(data["row-col-data"], data["next-row"], data["ncols"], data["header"],
+                                    path_to_out_dir, path_to_csv_out_dir, setup_id)
+
+                debug_msg = "wrote row: " + str(data["next-row"]) + " next-row: " + str(
+                    data["next-row"] + 1) + " rows unwritten: " + str(list(data["row-col-data"].keys()))
                 print(debug_msg)
                 # debug_file.write(debug_msg + "\n")
-                if is_nodata:
-                    data["row-col-data"][row][col] = -9999
-                else:
-                    data["row-col-data"][row][col].append(create_output(msg))
-                data["datacell-count"][row] -= 1
 
-                process_message.received_env_count = process_message.received_env_count + 1
+                data["next-row"] += 1  # move to next row (to be written)
 
-                while (data["next-row"] in data["row-col-data"] and data["datacell-count"][data["next-row"]] == 0) \
-                        or (
-                        len(data["datacell-count"]) > data["next-row"] and data["datacell-count"][data["next-row"]] == 0):
-
-                    path_to_out_dir = config["out"] + str(setup_id) + "/"
-                    path_to_csv_out_dir = config["csv-out"] + str(setup_id) + "/"
-                    print(path_to_out_dir)
-                    if not data["out_dir_exists"]:
-                        if os.path.isdir(path_to_out_dir) and os.path.exists(path_to_out_dir):
-                            data["out_dir_exists"] = True
-                        else:
-                            try:
-                                os.makedirs(path_to_out_dir)
-                                data["out_dir_exists"] = True
-                            except OSError:
-                                print("c: Couldn't create dir:", path_to_out_dir, "! Exiting.")
-                                exit(1)
-                        if os.path.isdir(path_to_csv_out_dir) and os.path.exists(path_to_csv_out_dir):
-                            data["out_dir_exists"] = True
-                        else:
-                            try:
-                                os.makedirs(path_to_csv_out_dir)
-                                data["out_dir_exists"] = True
-                            except OSError:
-                                print("c: Couldn't create dir:", path_to_csv_out_dir, "! Exiting.")
-                                exit(1)
-
-                    write_row_to_grids(data["row-col-data"], data["next-row"], data["ncols"], data["header"],
-                                       path_to_out_dir, path_to_csv_out_dir, setup_id)
-
-                    debug_msg = "wrote row: " + str(data["next-row"]) + " next-row: " + str(
-                        data["next-row"] + 1) + " rows unwritten: " + str(list(data["row-col-data"].keys()))
-                    print(debug_msg)
-                    # debug_file.write(debug_msg + "\n")
-
-                    data["next-row"] += 1  # move to next row (to be written)
-
-                    if leave_after_finished_run \
-                            and ((data["end_row"] < 0 and data["next-row"] > data["nrows"] - 1)
-                                 or (0 <= data["end_row"] < data["next-row"])):
-                        process_message.setup_count += 1
+                if leave_after_finished_run \
+                        and ((data["end_row"] < 0 and data["next-row"] > data["nrows"] - 1)
+                                or (0 <= data["end_row"] < data["next-row"])):
+                    process_message.setup_count += 1
 
         elif write_normal_output_files:
             if msg.get("type", "") in ["jobs-per-cell", "no-data", "setup_data"]:

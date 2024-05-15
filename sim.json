@@ -5,6 +5,15 @@
 	"climate.csv": "",
 
 	"climate.csv-options": {
+		"start-date": "2021-01-01",
+        "end-date": "2099-12-31",
+        "no-of-climate-file-header-lines": 2,
+        "csv-separator": ",",
+        "header-to-acd-names": {
+        }
+    },
+
+	"bonn_dwd_data_climate.csv-options": {
 		"_start-date": "2021-01-01",
         "_end-date": "2099-12-31",
         "no-of-climate-file-header-lines": 1,

@@ -11,72 +11,70 @@
 		}
 	},
   
-	"cropRotationTemplates": [{
-			"worksteps": [
-				{
-					"date": "0000-03-01", "type": "Sowing", "crop": ["ref", "crops", "RYE"] 
+	"cropRotation": [{
+		"worksteps": [
+			{
+				"date": "0000-03-01", "type": "Sowing", "crop": ["ref", "crops", "RYE"] 
+			},
+			{
+				"date": "0000-06-15",
+				"type": "Cutting",
+				"organs": {
+					"Leaf": [
+						0.15,
+						"m2 m-2",
+						"left"],
+					"Shoot": [
+						100,
+						"kg ha-1",
+						"left"]
 				},
-				{
-					"date": "0000-06-15",
-					"type": "Cutting",
-					"organs": {
-						"Leaf": [
-							0.15,
-							"m2 m-2",
-							"left"],
-						"Shoot": [
-							100,
-							"kg ha-1",
-							"left"]
-					},
-					"export": {
-						"Leaf": [
-							100,
-							"%"
-						],
-						"Shoot": [
-							100,
-							"%"
-						],
-						"Fruit": [
-							0,
-							"%"
-						]
-					}
-				},
-								{
-					"date": "0000-09-15",
-					"type": "Cutting",
-					"organs": {
-						"Leaf": [
-							0.4,
-							"m2 m-2",
-							"left"],
-						"Shoot": [
-							100,
-							"kg ha-1",
-							"left"]
-					},
-					"export": {
-						"Leaf": [
-							100,
-							"%"
-						],
-						"Shoot": [
-							100,
-							"%"
-						],
-						"Fruit": [
-							0,
-							"%"
-						]
-					}
+				"export": {
+					"Leaf": [
+						100,
+						"%"
+					],
+					"Shoot": [
+						100,
+						"%"
+					],
+					"Fruit": [
+						0,
+						"%"
+					]
 				}
-			]
-	}
-	],
-
-	"cropRotation": ["ref", "cropRotationTemplates", "RYE"],
+			},
+							{
+				"date": "0000-09-15",
+				"type": "Cutting",
+				"organs": {
+					"Leaf": [
+						0.4,
+						"m2 m-2",
+						"left"],
+					"Shoot": [
+						100,
+						"kg ha-1",
+						"left"]
+				},
+				"export": {
+					"Leaf": [
+						100,
+						"%"
+					],
+					"Shoot": [
+						100,
+						"%"
+					],
+					"Fruit": [
+						0,
+						"%"
+					]
+				}
+			}
+		]
+}
+],
 	
 	"CropParameters": {
 		"=": ["include-from-file", "general/crop.json"]
