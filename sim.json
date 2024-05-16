@@ -47,12 +47,19 @@
 		"obj-outputs?": true,
 
 		"events": [
-			"crop", [
-				["CM-count", "FIRST"],
-				["Year", "LAST"],
-				["Crop", "FIRST"],
-				["Yield", "LAST"],
-				["AbBiom", "LAST"]
+			"xxxx-06-14", [
+				"CM-count",
+				"Crop",
+				"Year",
+				"Yield|Yield_06-14",
+				"AbBiom|AbBiom_06-14"
+			],
+			"xxxx-09-14", [
+				"CM-count",
+				"Crop",
+				"Year",
+				"Yield|Yield_09-14",
+				"AbBiom|AbBiom_09-14"
 			]
 		]
 	},

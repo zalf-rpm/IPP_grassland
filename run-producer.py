@@ -574,13 +574,14 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             print("WARNING: Row ", (sent_env_count - 1), " already exists")
             # print("unknown_soil_ids:", unknown_soil_ids)
 
-        if env_template:
-            env_template["pathToClimateCSV"] = ""
-            env_template["customId"] = {
-                "setup_id": setup_id,
-                "no_of_sent_envs": sent_env_count,
-            }
-            socket.send_json(env_template)
+        #if env_template:
+        #    env_template["pathToClimateCSV"] = ""
+        #    env_template["customId"] = {
+        #        "setup_id": setup_id,
+        #        "nodata": True,
+        #        "no_of_sent_envs": sent_env_count,
+        #    }
+        #    socket.send_json(env_template)
 
             # print("crows/cols:", crows_cols)
         # cs__.close()

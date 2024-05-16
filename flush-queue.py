@@ -39,7 +39,7 @@ socket.connect("tcp://" + config["server"] + ":" + config["port"])
 
 i = 0
 while True:
-    socket.recv_json(encoding="latin-1")
+    socket.recv_json()  # encoding="latin-1")
     if i%10 == 0:
         print(i, end=" ", flush=True)
     i = i + 1
