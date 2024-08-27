@@ -51,14 +51,14 @@
 				"CM-count",
 				"Crop",
 				"Year",
-				"Yield|Yield_06-14",
+				["exportedCutBiomass|CutBiomass_06-14","LAST"],
 				"AbBiom|AbBiom_06-14"
 			],
 			"xxxx-09-14", [
 				"CM-count",
 				"Crop",
 				"Year",
-				"Yield|Yield_09-14",
+				["exportedCutBiomass|CutBiomass_09-14","LAST"],
 				"AbBiom|AbBiom_09-14"
 			]
 		]
