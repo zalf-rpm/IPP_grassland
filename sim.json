@@ -51,15 +51,22 @@
 				"CM-count",
 				"Crop",
 				"Year",
-				["exportedCutBiomass|CutBiomass_06-14","LAST"],
-				"AbBiom|AbBiom_06-14"
+				["exportedCutBiomass|CutBiomass_06-15","LAST"],
+				"AbBiom|AbBiom_06-15"
 			],
 			"xxxx-09-14", [
 				"CM-count",
 				"Crop",
 				"Year",
-				["exportedCutBiomass|CutBiomass_09-14","LAST"],
-				"AbBiom|AbBiom_09-14"
+				["exportedCutBiomass|CutBiomass_08-15","LAST"],
+				"AbBiom|AbBiom_08-15"
+			],
+			"xxxx-10-15", [
+				"CM-count",
+				"Crop",
+				"Year",
+				["exportedCutBiomass|CutBiomass_10-15","LAST"],
+				"AbBiom|AbBiom_10-15"
 			]
 		]
 	},

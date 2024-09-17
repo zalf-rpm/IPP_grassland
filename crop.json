@@ -49,7 +49,37 @@
                     }
                 },
                 {
-                    "date": "0000-09-15",
+                    "date": "0000-08-15",
+                    "type": "Cutting",
+                    "organs": {
+                        "Leaf": [
+                            0.4,
+                            "m2 m-2",
+                            "left"
+                        ],
+                        "Shoot": [
+                            100,
+                            "kg ha-1",
+                            "left"
+                        ]
+                    },
+                    "export": {
+                        "Leaf": [
+                            100,
+                            "%"
+                        ],
+                        "Shoot": [
+                            100,
+                            "%"
+                        ],
+                        "Fruit": [
+                            0,
+                            "%"
+                        ]
+                    }
+                },
+                {
+                    "date": "0000-10-15",
                     "type": "Cutting",
                     "organs": {
                         "Leaf": [
