@@ -47,14 +47,14 @@
 		"obj-outputs?": true,
 
 		"events": [
-			"xxxx-06-14", [
+			"xxxx-06-15", [
 				"CM-count",
 				"Crop",
 				"Year",
 				["exportedCutBiomass|CutBiomass_06-15","LAST"],
 				"AbBiom|AbBiom_06-15"
 			],
-			"xxxx-09-14", [
+			"xxxx-08-15", [
 				"CM-count",
 				"Crop",
 				"Year",
