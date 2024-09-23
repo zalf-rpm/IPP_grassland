@@ -11,8 +11,8 @@
   "SoilTemperatureParameters": ["include-from-file", "general/soil-temperature.json"],
 	"EnvironmentParameters": {
     "=": ["include-from-file", "general/environment.json"],
-    "MaxGroundwaterDepth": 0.3,
-    "MinGroundwaterDepth": 0.3
+    "MaxGroundwaterDepth": 0,
+    "MinGroundwaterDepth": 2
   },
   "SoilOrganicParameters": ["include-from-file", "general/soil-organic.json"],
   "SoilTransportParameters": ["include-from-file", "general/soil-transport.json"],
