@@ -54,20 +54,23 @@
 				["exportedCutBiomass|CutBiomass_06-15","LAST"],
 				"AbBiom|AbBiom_06-15",
 				["SOC_06-15", [1, 20, "AVG"]]
+			
 			],
 			"xxxx-08-15", [
 				"CM-count",
 				"Crop",
 				"Year",
 				["exportedCutBiomass|CutBiomass_08-15","LAST"],
-				"AbBiom|AbBiom_08-15"
+				"AbBiom|AbBiom_08-15",
+				["SOC_06-15", [1, 20, "AVG"]]
 			],
 			"xxxx-10-15", [
 				"CM-count",
 				"Crop",
 				"Year",
 				["exportedCutBiomass|CutBiomass_10-15","LAST"],
-				"AbBiom|AbBiom_10-15"
+				"AbBiom|AbBiom_10-15", 
+				["SOC_06-15", [1, 20, "AVG"]]
 			]
 		]
 	},
