@@ -53,7 +53,7 @@
 				"Year",
 				["exportedCutBiomass|CutBiomass_06-15","LAST"],
 				"AbBiom|AbBiom_06-15",
-				["SOC", [1, 20, "AVG"]]
+				["SOC_06-15", [1, 20, "AVG"]]
 			],
 			"xxxx-08-15", [
 				"CM-count",
