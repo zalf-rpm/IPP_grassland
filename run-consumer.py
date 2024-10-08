@@ -102,6 +102,7 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         "NLeach_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         "CutBiomass_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         "AbBiom_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "SOC_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}
     }
     output_keys = list(output_grids.keys())
 

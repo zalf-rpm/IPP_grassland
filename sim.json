@@ -75,7 +75,8 @@
 				"Crop",
 				"Year",
 				["exportedCutBiomass|CutBiomass_10-15","LAST"],
-				"AbBiom|AbBiom_10-15"
+				"AbBiom|AbBiom_10-15",
+				["SOC|SOC_10-15", [1, 20, "AVG"]]
 			]
 		]
 	},
