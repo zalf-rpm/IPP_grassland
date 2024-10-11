@@ -10,6 +10,11 @@
             "residueParams": ["include-from-file", "crops/residues/grass-ley.json"]
         }
     },
+    "fert-params": {
+		"AN": ["include-from-file", "mineral-fertilisers/AN.json"],
+		"U": ["include-from-file", "mineral-fertilisers/U.json"],
+		"CAM": ["include-from-file", "organic-fertilisers/CAM.json"]
+	}, 
     "cropRotation": [
         {
             "worksteps": [
@@ -48,6 +53,13 @@
                         ]
                     }
                 },
+				{
+					"type": "NDemandFertilization",
+					"date": "0000-06-20",
+					"N-demand": [40.0, "kg"],
+					"depth": [0.3, "m"],
+					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
+				},
                 {
                     "date": "0000-08-15",
                     "type": "Cutting",
@@ -79,6 +91,13 @@
                     }
                 },
                 {
+					"type": "NDemandFertilization",
+					"date": "0000-08-20",
+					"N-demand": [40.0, "kg"],
+					"depth": [0.3, "m"],
+					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
+				},
+                {
                     "date": "0000-10-15",
                     "type": "Cutting",
                     "organs": {
@@ -107,7 +126,14 @@
                             "%"
                         ]
                     }
-                }
+                },
+                {
+					"type": "NDemandFertilization",
+					"date": "0000-10-20",
+					"N-demand": [40.0, "kg"],
+					"depth": [0.3, "m"],
+					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
+				}
             ]
         }
     ],
