@@ -34,10 +34,10 @@ import soil_io3
 import monica_run_lib as Mrunlib
 
 PATHS = {
-    "cj-local-remote": {
+    "re-local-remote": {
         "path-to-data-dir": "data/",
-        "path-to-output-dir": "D:/projects/KlimErtrag/out_remote_local/",
-        "path-to-csv-output-dir": "D:/projects/KlimErtrag/out_remote_local/"
+        "path-to-output-dir": "out/",
+        "path-to-csv-output-dir": "csv-out/"
     },
     "mbm-local-remote": {
         "path-to-data-dir": "data/",
@@ -208,8 +208,8 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
     """collect data from workers"""
 
     config = {
-        "mode": "mbm-local-remote",
-        "port": server["port"] if server["port"] else "7777",
+        "mode": "re-local-remote",
+        "port": server["port"] if server["port"] else "7778",
         "server": server["server"] if server["server"] else "login01.cluster.zalf.de",
         "start-row": "0",
         "end-row": "-1",
