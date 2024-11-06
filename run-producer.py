@@ -103,7 +103,6 @@ DATA_GRID_CROPS = "germany/permanent-grass-mask-BB_1000_25832_etrs89-utm32n.asc"
 # DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_wc_18.asc"
 DATA_GRID_GW_MIN = "germany/gwl-min_1000_25832_etrs89-utm32.asc"  # min groundwater level map
 DATA_GRID_GW_MAX = "germany/gwl-max_1000_25832_etrs89-utm32.asc"  # max groundwater level map
-DATA_GRID_GW_MEAN = "germany/gwl-mean_1000_25832_etrs89-utm32.asc"  # max groundwater level map
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
 # TEMPLATE_PATH_LATLON = "data/latlon-to-rowcol.json"
 TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv"
@@ -275,17 +274,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     gw_max_grid = np.loadtxt(path_to_gw_max_grid, dtype=float, skiprows=6)
     gw_max_interpolate = Mrunlib.create_ascii_grid_interpolator(gw_max_grid, gw_max_metadata)
     print("read: ", path_to_gw_max_grid)
-
-    # mean groundwater level data
-    path_to_gw_mean_grid = paths["path-to-data-dir"] + DATA_GRID_GW_MEAN
-    gw_mean_epsg_code = int(path_to_gw_mean_grid.split("/")[-1].split("_")[2])
-    gw_mean_crs = CRS.from_epsg(gw_mean_epsg_code)
-    if gw_mean_crs not in soil_crs_to_x_transformers:
-        soil_crs_to_x_transformers[gw_mean_crs] = Transformer.from_crs(soil_crs, gw_mean_crs)
-    gw_mean_metadata, _ = Mrunlib.read_header(path_to_gw_mean_grid)
-    gw_mean_grid = np.loadtxt(path_to_gw_mean_grid, dtype=float, skiprows=6)
-    gw_mean_interpolate = Mrunlib.create_ascii_grid_interpolator(gw_mean_grid, gw_mean_metadata)
-    print("read: ", path_to_gw_mean_grid)
 
     # Create the function for the mask. This function will later use the additional column in a setup file!
 
@@ -485,11 +473,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 gw_max_r, gw_max_h = tcoords[gw_max_crs]
                 max_groundwater_depth = gw_max_interpolate(gw_max_r, gw_max_h)
 
-                if gw_mean_crs not in tcoords:
-                    tcoords[gw_mean_crs] = soil_crs_to_x_transformers[gw_mean_crs].transform(sr, sh)
-                gw_mean_r, gw_mean_h = tcoords[gw_mean_crs]
-                mean_groundwater_depth = gw_mean_interpolate(gw_mean_r, gw_mean_h)
-
                 # if irrigation_crs not in tcoords:
                 #     tcoords[irrigation_crs] = soil_crs_to_x_transformers[irrigation_crs].transform(sr, sh)
                 # irr_r, irr_h = tcoords[irrigation_crs]
@@ -524,13 +507,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                         min_groundwater_depth / 100, "m"]
                     env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
                         max_groundwater_depth / 100, "m"]
-                elif setup["groundwater-level"] == "MEAN":
-                    # Assign mean groundwater depth to the environment template
-                    env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
-                    env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
-                        mean_groundwater_depth / 100, "m"]
-                    env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
-                        mean_groundwater_depth / 100, "m"]
 
                 # setting impenetrable layer
                 if setup["impenetrable-layer"]:
