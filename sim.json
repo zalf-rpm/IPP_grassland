@@ -76,7 +76,10 @@
 				"Year",
 				["exportedCutBiomass|CutBiomass_10-15","LAST"],
 				"AbBiom|AbBiom_10-15",
-				["SOC|SOC_10-15", [1, 5, "AVG"]]
+				["SOC|SOC_10-15", [1, 5, "AVG"]],
+				["ET0|Eto_10-15", "SUM"],
+				"N2O|N2O_10-15",
+				"NLeach|NLeach_10-15"
 			]
 		]
 	},
