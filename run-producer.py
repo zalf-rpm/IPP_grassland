@@ -331,7 +331,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
         if region_name and len(region_name) > 0:
             # Create the soil mask for the specific region
-            path_to_soil_grid_ow = paths["path-to-data-dir"] + DATA_GRID_SOIL_OW
+            path_to_soil_grid_ow = paths["path-to-data-dir"] + DATA_GRID_SOIL
             mask = create_mask_from_shapefile(NUTS1_REGIONS, region_name, path_to_soil_grid_ow)
 
             # Apply the soil mask to the soil grid
