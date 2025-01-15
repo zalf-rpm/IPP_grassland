@@ -92,8 +92,8 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 DATA_GRID_HEIGHT = "germany/dem_1000_25832_etrs89-utm32n.asc"
 DATA_GRID_SLOPE = "germany/slope_1000_25832_etrs89-utm32n.asc"
 DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
-#DATA_GRID_SOIL = "germany/buek200_1000_25832_etrs89-utm32n.asc"
-DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
+DATA_GRID_SOIL = "germany/buek200_1000_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL_OW = "germany/buek200_1000_25832_etrs89-utm32n_OW.asc"
 #DATA_GRID_CROPS = "germany/permanent-grass-mask-BB_1000_25832_etrs89-utm32n.asc"  #nodata was 0 in the file assigned below no data realigned to be -9999
 DATA_GRID_CROPS = "germany/permanent-grass-mask-BB_1000_25832_etrs89-utm32n-realigned.asc" #nodata = -9999
 #DATA_GRID_CROPS = "germany/OWgermany-crop-ww_1000_25832_etrs89-utm32n.asc"  # Added as a cropmap for winter wheat OW
