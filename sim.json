@@ -46,13 +46,18 @@
 
 		"obj-outputs?": true,
 
+
 		"events": [
 			"xxxx-06-15", [
 				"CM-count",
 				"Crop",
 				"Year",
-
-
+				["exportedCutBiomass|CutBiomass_06-15","LAST"],
+				"AbBiom|AbBiom_06-15",
+				["SOC|SOC_06-15", [1, 4, "SUM"]],
+				"N2O|N2O_06-15",
+				"NLeach|NLeach_06-15",
+				["ET0|Eto_06-15", "SUM"],
 				["Pot_ET|Pot_ET_06-15"]
 							
 			],
@@ -60,19 +65,28 @@
 				"CM-count",
 				"Crop",
 				"Year",
-
-				["Pot_ET|Pot_ET_08-15"]
+				["exportedCutBiomass|CutBiomass_08-15","LAST"],
+				"AbBiom|AbBiom_08-15",
+				["SOC|SOC_08-15", [1, 4, "SUM"]],
+				["ET0|Eto_08-15", "SUM"],
+				["Pot_ET|Pot_ET_08-15"],
+				"N2O|N2O_08-15",
+				"NLeach|NLeach_08-15"
 			],
 			"xxxx-10-15", [
 				"CM-count",
 				"Crop",
 				"Year",
-
-				["Pot_ET|Pot_ET_10-15"]
+				["exportedCutBiomass|CutBiomass_10-15","LAST"],
+				"AbBiom|AbBiom_10-15",
+				["SOC|SOC_10-15", [1, 4, "SUM"]],
+				["ET0|Eto_10-15", "SUM"],
+				["Pot_ET|Pot_ET_10-15"],
+				"N2O|N2O_10-15",
+				"NLeach|NLeach_10-15"
 			]
 		]
 	},
-
 	"NumberOfLayers": 20,
 	"LayerThickness": [0.1, "m"],
 
