@@ -86,26 +86,6 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         write_row_to_grids.list_of_output_files = defaultdict(list)
 
     make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=np.float))
-
-    output_grids = {
-
-        "Act_ET_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        "RootDep_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
-        "Kc_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},  
-        "LAI_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
-        "ETa/ETc_06": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-
-        "Act_ET_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        "RootDep_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
-        "Kc_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},  
-        "LAI_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
-        "ETc_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        
-        "Act_ET_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        "RootDep_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
-        "Kc_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},  
-        "LAI_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
-        "ETc_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}                 
         #"CutBiomass_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         #"AbBiom_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         #"SOC_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
@@ -127,6 +107,21 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         #"Pot_ET_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}
         #"N2O_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         #"NLeach_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}
+    output_grids = {
+
+        "Act_ET_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "RootDep_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
+        "Kc_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},  
+        "LAI_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
+        "Act_ET_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "RootDep_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
+        "Kc_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},  
+        "LAI_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
+        "Act_ET_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "RootDep_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
+        "Kc_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},  
+        "LAI_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
+        #"ETc_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}                
 
     }
     output_keys = list(output_grids.keys())

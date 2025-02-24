@@ -55,8 +55,7 @@
 				"Act_ET|Act_ET_06-15",
 				"RootDep|RootDep_06-15",
 				"Kc|Kc_06-15",
-				"LAI|LAI_06-15",
-				"ETa/ETc|ETa/ETc_06-15"
+				"LAI|LAI_06-15"
 							
 			],
 			"xxxx-08-15", [
@@ -66,8 +65,7 @@
 				"Act_ET|Act_ET_08-15",
 				"RootDep|RootDep_08-15",
 				"Kc|Kc_08-15",
-				"LAI|LAI_08-15",
-				"ETa/ETc|ETa/ETc_08-15"
+				"LAI|LAI_08-15"
 			],
 			"xxxx-10-15", [
 				"CM-count",
@@ -76,11 +74,11 @@
 				"Act_ET|Act_ET_10-15",
 				"RootDep|RootDep_10-15",
 				"Kc|Kc_10-15",
-				"LAI|LAI_10-15",
-				"ETa/ETc|ETa/ETc_10-15"
+				"LAI|LAI_10-15"
 			]
 		]
 	},
+	
 	"NumberOfLayers": 20,
 	"LayerThickness": [0.1, "m"],
 
