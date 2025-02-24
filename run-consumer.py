@@ -94,16 +94,18 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         "Kc_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},  
         "LAI_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
         "ETa/ETc_06": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+
         "Act_ET_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         "RootDep_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
         "Kc_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},  
         "LAI_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
         "ETc_08-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        
         "Act_ET_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         "RootDep_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
         "Kc_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},  
         "LAI_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}, 
-        "ETc_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},                 
+        "ETc_10-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}                 
         #"CutBiomass_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         #"AbBiom_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         #"SOC_06-15": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
