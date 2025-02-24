@@ -52,32 +52,42 @@
 				"CM-count",
 				"Crop",
 				"Year",
-				"Act_ET|Act_ET_06-15",
-				"RootDep|RootDep_06-15",
-				"Kc|Kc_06-15",
-				"LAI|LAI_06-15"
+				["exportedCutBiomass|CutBiomass_06-15","LAST"],
+				"AbBiom|AbBiom_06-15",
+				["SOC|SOC_06-15", [1, 4, "SUM"]],
+				"N2O|N2O_06-15",
+				"NLeach|NLeach_06-15",
+				["ET0|Eto_06-15", "SUM"],
+				["Pot_ET|Pot_ET_06-15", "SUM"]
 							
 			],
 			"xxxx-08-15", [
 				"CM-count",
 				"Crop",
 				"Year",
-				"Act_ET|Act_ET_08-15",
-				"RootDep|RootDep_08-15",
-				"Kc|Kc_08-15",
-				"LAI|LAI_08-15"
+				["exportedCutBiomass|CutBiomass_08-15","LAST"],
+				"AbBiom|AbBiom_08-15",
+				["SOC|SOC_08-15", [1, 4, "SUM"]],
+				["ET0|Eto_08-15", "SUM"],
+				["Pot_ET|Pot_ET_08-15", "SUM"],
+				"N2O|N2O_08-15",
+				"NLeach|NLeach_08-15"
 			],
 			"xxxx-10-15", [
 				"CM-count",
 				"Crop",
 				"Year",
-				"Act_ET|Act_ET_10-15",
-				"RootDep|RootDep_10-15",
-				"Kc|Kc_10-15",
-				"LAI|LAI_10-15"
+				["exportedCutBiomass|CutBiomass_10-15","LAST"],
+				"AbBiom|AbBiom_10-15",
+				["SOC|SOC_10-15", [1, 4, "SUM"]],
+				["ET0|Eto_10-15", "SUM"],
+				["Pot_ET|Pot_ET_10-15", "SUM"],
+				"N2O|N2O_10-15",
+				"NLeach|NLeach_10-15"
 			]
 		]
 	},
+
 	
 	"NumberOfLayers": 20,
 	"LayerThickness": [0.1, "m"],
