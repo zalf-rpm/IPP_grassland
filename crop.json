@@ -4,8 +4,24 @@
         "RYE": {
             "is-winter-crop": false,
             "cropParams": {
-                "species": ["include-from-file", "crops/species/Grass_Species4.json"],
-                "cultivar": ["include-from-file", "crops/cultivars/Grass_CLV4.json"]
+                "species": {
+                    "=": ["include-from-file", "crops/species/Grass_Species4.json"],
+
+                },
+                "cultivar": {
+                    "=": ["include-from-file", "crops/cultivars/Grass_CLV4.json"],
+                    "CropSpecificMaxRootingDepth": 0.30000001192092896,
+                    "DroughtStressThreshold": [1, 1, 1, 1, 1, 1],
+                    "SpecificLeafArea": [
+                            0.0061,
+                            0.0022,
+                            0.00212,
+                            0.00267,
+                            0.0035,
+                            0.00639
+                        ]
+                    ]
+                },
             },
             "residueParams": ["include-from-file", "crops/residues/grass-ley.json"]
         }
