@@ -18,6 +18,7 @@
 import capnp
 from datetime import datetime
 import json
+import logging
 import os
 from pathlib import Path
 import numpy as np
@@ -31,17 +32,24 @@ import zmq
 #abs_imports = [str(PATH_TO_CAPNP_SCHEMAS)]
 #fbp_capnp = capnp.load(str(PATH_TO_CAPNP_SCHEMAS / "fbp.capnp"), imports=abs_imports)
 
+def flatten_biomasses_dict(biomasses: dict):
+    flattend_dict = []
+    for year in sorted(biomasses.keys()):
+        flattend_dict.extend(biomasses[year])
+    return flattend_dict
+
 class spot_setup(object):
-    def __init__(self, user_params, observations, prod_writer, cons_reader, path_to_out, only_nuts3_region_ids, weight_per_region):
+    def __init__(self, user_params, observations, #prod_writer, cons_reader,
+                 path_to_out):#, only_nuts3_region_ids, weight_per_region):
         self.user_params = user_params
         self.params = []
         self.observations = observations
-        self.obs_flat_list = list(map(lambda d: d["value"], observations))
+        self.obs_flat_list = flatten_biomasses_dict(observations)
         #self.prod_writer = prod_writer
         #self.cons_reader = cons_reader
         self.path_to_out_file = path_to_out + "/spot_setup.out"
-        self.only_nuts3_region_ids = only_nuts3_region_ids
-        self.weight_per_region = weight_per_region
+        #self.only_nuts3_region_ids = only_nuts3_region_ids
+        #self.weight_per_region = weight_per_region
         self.context = zmq.Context()
         self.prod_channel = self.context.socket(zmq.PUSH)
         self.prod_channel.bind("tcp://*:9998")
@@ -72,20 +80,20 @@ class spot_setup(object):
     def simulation(self, vector):
         # vector = MaxAssimilationRate, AssimilateReallocation, RootPenetrationRate
         msg_content = dict(zip(vector.name, vector))
-        msg_content["only_nuts3_region_ids"] = self.only_nuts3_region_ids
-        self.channel.send_json(msg_content)
+        #msg_content["only_nuts3_region_ids"] = self.only_nuts3_region_ids
+        self.prod_channel.send_json(msg_content)
         #out_ip = fbp_capnp.IP.new_message(content=json.dumps(msg_content))
         #self.prod_writer.write(value=out_ip).wait()
         with open(self.path_to_out_file, "a") as _:
             _.write(f"{datetime.now()} sent params to monica setup: {vector}\n")
         print("sent params to monica setup:", vector, flush=True)
 
-        msg = self.cons_reader.read().wait()
-        # check for end of data from in port
-        if msg.which() == "done":
-            return
+        #msg = self.cons_reader.read().wait()
+        ## check for end of data from in port
+        #if msg.which() == "done":
+        #    return
 
-        nuts3_region_id_and_year_to_avg_yield = self.cons_channel.recv_json()
+        year_to_biomasses = self.cons_channel.recv_json()
         #in_ip = msg.value.as_struct(fbp_capnp.IP)
         #s: str = in_ip.content.as_text()
         #nuts3_region_id_and_year_to_avg_yield = json.loads(s)
@@ -95,16 +103,16 @@ class spot_setup(object):
         # print("received monica results:", country_id_and_year_to_avg_yield, flush=True)
 
         # remove all simulation results which are not in the observed list
-        sim_list = []
-        for d in self.observations:
-            key = f"{d['id']}|{d['year']}"
-            if key in nuts3_region_id_and_year_to_avg_yield:
-                #if np.isnan(d["value"]):
-                #    sim_list.append(np.nan)
-                #else:
-                sim_list.append(nuts3_region_id_and_year_to_avg_yield[key])
-            else:
-                sim_list.append(np.nan)
+        sim_list = flatten_biomasses_dict(year_to_biomasses)
+        #for d in self.observations:
+        #    key = f"{d['id']}|{d['year']}"
+        #    if key in nuts3_region_id_and_year_to_avg_yield:
+        #        #if np.isnan(d["value"]):
+        #        #    sim_list.append(np.nan)
+        #        #else:
+        #        sim_list.append(nuts3_region_id_and_year_to_avg_yield[key])
+        #    else:
+        #        sim_list.append(np.nan)
 
         #with open(self.path_to_out_file, "a") as _:
         #    _.write(f"{datetime.now()} simulation and observation matchedcal-sp-set-M\n\n")
@@ -124,11 +132,10 @@ class spot_setup(object):
 
 
     def objectivefunction(self, simulation, evaluation):
-
         #return unbiased_rmse_RB(evaluation, simulation)
-        #return spotpy.objectivefunctions.rmse(evaluation, simulation)
+        return spotpy.objectivefunctions.rmse(evaluation, simulation)
         #return calculate_percentage_difference_new(evaluation, simulation)
-        return calculate_weighted_rmse(evaluation, simulation, self.weight_per_region)
+        #return calculate_weighted_rmse(evaluation, simulation, self.weight_per_region)
 
 
 

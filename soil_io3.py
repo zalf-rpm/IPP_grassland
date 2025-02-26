@@ -250,8 +250,6 @@ def get_soil_profile_group(con, profile_group_id=None, only_raw_data=True, no_un
     for row in rows:
         group_id = int(row["polygon_id"])
         profile_id = int(row["profile_id_in_polygon"])
-        range_percentage = row["range_percentage_of_area"]
-        avg_percentage = float(row["avg_range_percentage_of_area"])
         if not last_profile_id:
             last_profile_id = profile_id
         if not last_profile_group_id:
@@ -272,6 +270,9 @@ def get_soil_profile_group(con, profile_group_id=None, only_raw_data=True, no_un
             profile_groups.append((last_profile_group_id, profiles))
             last_profile_group_id = group_id
             profiles = []
+
+        range_percentage = row["range_percentage_of_area"]
+        avg_percentage = float(row["avg_range_percentage_of_area"])
 
         layer, prev_depth = create_layer(row, prev_depth, only_raw_data, no_units=no_units)
         layers.append(layer)

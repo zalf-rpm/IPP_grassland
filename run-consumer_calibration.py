@@ -56,13 +56,15 @@ def update_config(config, argv, print_config=False, allow_new_keys=False):
         if print_config:
             print(config)
 
-def run_consumer(server=None, port=None):
+def run_consumer(server=None, port=None, channel_server=None, channel_port=None):
     """collect data from workers"""
 
     config = {
         "mode": "remoteConsumer-remoteMonica",
         "port": port if port else "7777",  # local 7778,  remote 7777
         "server": server if server else "login01.cluster.zalf.de",
+        "channel-port": channel_port if channel_port else "9999",
+        "channel-server": channel_server if channel_server else "localhost",  # "login01.cluster.zalf.de",
         "writer_sr": None,
         "path_to_out": "out/",
         "timeout": 600000  # 10min
@@ -85,7 +87,7 @@ def run_consumer(server=None, port=None):
     socket.RCVTIMEO = config["timeout"]
 
     channel = context.socket(zmq.PUSH)
-    channel.connect("tcp://" + config["server"] + ":9999")
+    channel.connect("tcp://" + config["channel-server"] + ":" + config["channel-port"])
 
     year_to_biomasses = defaultdict(list)
 

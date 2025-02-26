@@ -137,21 +137,23 @@ def update_config(config, argv, print_config=False, allow_new_keys=False):
         if print_config:
             print(config)
 
-def run_producer(server=None, port=None):
+def run_producer(server=None, port=None, channel_server=None, channel_port=None):
     context = zmq.Context()
     socket = context.socket(zmq.PUSH)  # pylint: disable=no-member
     # config_and_no_data_socket = context.socket(zmq.PUSH)
 
     config = {
         "mode": "mbm-local-remote",
-        "server-port": port if port else "6666",
+        "port": port if port else "6666",
         "server": server if server else "login01.cluster.zalf.de",
+        "channel-port": channel_port if channel_port else "9998",
+        "channel-server": channel_server if channel_server else "localhost",#"login01.cluster.zalf.de",
         "start-row": "0",
         "end-row": "-1",
         "row_cols": "[[216,507]]",
         "path_to_dem_grid": "",
         "sim.json": "sim_calibration.json",
-        "crop.json": "crop_calibration.json",
+        "crop.json": "crop.json",
         "site.json": "site.json",
         "setups-file": "sim_setups_calibration_VK.csv",
         "run-setups": "[1]",
@@ -182,7 +184,7 @@ def run_producer(server=None, port=None):
     soil_db_con = sqlite3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB)
     # soil_db_con = cas_sq3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB) #CAS.
     # connect to monica proxy (if local, it will try to connect to a locally started monica)
-    socket.connect("tcp://" + config["server"] + ":" + str(config["server-port"]))
+    socket.connect("tcp://" + config["server"] + ":" + str(config["port"]))
 
     # read setup from csv file
     setups = Mrunlib.read_sim_setups(config["setups-file"])
@@ -339,12 +341,13 @@ def run_producer(server=None, port=None):
         setup_id = run_setups[0]
 
     channel = context.socket(zmq.PULL)
-    channel.connect("tcp://" + config["server"] + ":9998")
+    channel.connect("tcp://" + config["channel-server"] + ":" + config["channel-port"])
     #conman = common.ConnectionManager()
     #reader = conman.try_connect(config["reader_sr"], cast_as=fbp_capnp.Channel.Reader, retry_secs=1)
     sent_env_count = 0
     while True:
         params = channel.recv_json() # keys: MaxAssimilationRate, AssimilateReallocation, RootPenetrationRate
+        print("received params: ", params)
         # check for end of data from in port
         if params == "done":
             break
@@ -385,20 +388,6 @@ def run_producer(server=None, port=None):
             soil_grid[mask == False] = -8888
             soil_grid[soil_grid_copy == -9999] = -9999
 
-        # add crop id from setup file
-        try:
-            # read seed/harvest dates for each crop_id
-            path_harvest = TEMPLATE_PATH_HARVEST.format(path_to_data_dir=paths["path-to-data-dir"],
-                                                        crop_id=crop_id_short)
-            print("created seed harvest gk5 interpolator and read data: ", path_harvest)
-            Mrunlib.create_seed_harvest_geoGrid_interpolator_and_read_data(path_harvest, wgs84_crs, utm32_crs,
-                                                                                  ilr_seed_harvest_data)
-        except IOError:
-            path_harvest = TEMPLATE_PATH_HARVEST.format(path_to_data_dir=paths["path-to-data-dir"],
-                                                        crop_id=crop_id_short)
-            print("Couldn't read file:", path_harvest)
-            continue
-
         #with open(config["path_to_out"] + "/spot_setup.out", "a") as _:
         #    _.write(f"{datetime.now()} crop added producer\n")
 
@@ -437,57 +426,31 @@ def run_producer(server=None, port=None):
         # read template crop.json
         with open(setup.get("crop.json", config["crop.json"])) as _:
             crop_json = json.load(_)
-            crop_json["cropRotation"][2] = crop_id
-            real_crop_id = None
-            # set value of calibration params
-            for ws in crop_json["cropRotationTemplates"][crop_id][0]["worksteps"]:
-                if "Sowing" in ws["type"]:
-                    real_crop_id = ws["crop"][2]
-            if real_crop_id:
-                ps = crop_json["cropRotation"][0]["worksteps"][0]real_crop_id]["cropParams"]
-                for pname, pval in params.items():
-                    if pname == "SpecificLeafArea":
-                        ps["cultivar"][pname][0] *= pval
-                        ps["cultivar"][pname][1] *= pval
-                        ps["cultivar"][pname][2] *= pval
-                        ps["cultivar"][pname][3] *= pval
-                        ps["cultivar"][pname][4] *= pval
-                        ps["cultivar"][pname][5] *= pval
-                    elif pname == "DroughtStressThreshold":
-                        ps["cultivar"][pname][0] *= pval
-                        ps["cultivar"][pname][1] *= pval
-                        ps["cultivar"][pname][2] *= pval
-                        ps["cultivar"][pname][3] *= pval
-                        ps["cultivar"][pname][4] *= pval
-                        ps["cultivar"][pname][5] *= pval
-                    elif pname == "StageKcFactor":
-                        ps["cultivar"][pname][0] *= pval
-                        ps["cultivar"][pname][1] *= pval
-                        ps["cultivar"][pname][2] *= pval
-                        ps["cultivar"][pname][3] *= pval
-                        ps["cultivar"][pname][4] *= pval
-                        ps["cultivar"][pname][5] *= pval
-                    else:
-                        pname_arr = pname.split("_")
-                        i = None
-                        if len(pname_arr) == 2:
-                            pname = pname_arr[0]
-                            i = int(pname_arr[1])
-                        if pname in ps["species"]:
-                            if i:
-                                if len(ps["species"][pname]) < i:
-                                    ps["species"][pname][i] = pval
-                            else:
-                                ps["species"][pname] = pval
-                        elif pname in ps["cultivar"]:
-                            if i:
-                                if len(ps["cultivar"][pname]) > i:
-                                    ps["cultivar"][pname][i] = pval
-                            else:
-                                ps["cultivar"][pname] = pval
-            else:
-                print("Error couldn't find sowing workstep in crop.json")
-                exit(1)
+            ps = crop_json["crops"]["RYE"]["cropParams"]
+            for pname, pval in params.items():
+                if pname == "SpecificLeafArea":
+                    ps["cultivar"][pname][0] *= pval
+                    ps["cultivar"][pname][1] *= pval
+                    ps["cultivar"][pname][2] *= pval
+                    ps["cultivar"][pname][3] *= pval
+                    ps["cultivar"][pname][4] *= pval
+                    ps["cultivar"][pname][5] *= pval
+                elif pname == "DroughtStressThreshold":
+                    ps["cultivar"][pname][0] *= pval
+                    ps["cultivar"][pname][1] *= pval
+                    ps["cultivar"][pname][2] *= pval
+                    ps["cultivar"][pname][3] *= pval
+                    ps["cultivar"][pname][4] *= pval
+                    ps["cultivar"][pname][5] *= pval
+                elif pname == "StageKcFactor":
+                    ps["cultivar"][pname][0] *= pval
+                    ps["cultivar"][pname][1] *= pval
+                    ps["cultivar"][pname][2] *= pval
+                    ps["cultivar"][pname][3] *= pval
+                    ps["cultivar"][pname][4] *= pval
+                    ps["cultivar"][pname][5] *= pval
+                elif pname == "CropSpecificMaxRootingDepth":
+                    ps["cultivar"][pname] = pval
 
         crop_json["CropParameters"]["__enable_vernalisation_factor_fix__"] = setup[
             "use_vernalisation_fix"] if "use_vernalisation_fix" in setup else False
@@ -509,7 +472,7 @@ def run_producer(server=None, port=None):
 
         # unknown_soil_ids = set()
         soil_id_cache = {}
-        print("All Rows x Cols: " + str(srows) + "x" + str(scols))
+        #print("All Rows x Cols: " + str(srows) + "x" + str(scols))
         # cs__ = open("coord_mapping_etrs89-utm32n_to_wgs84-latlon.csv", "w")
         # cs__.write("row,col,center_25832_etrs89-utm32n_r,center_25832_etrs89-utm32n_h,center_lat,center_lon\n")
 
@@ -535,17 +498,35 @@ def run_producer(server=None, port=None):
             # inter = crow/ccol encoded into integer
             crow, ccol = climate_data_interpolator(sr, sh)
 
-            crop_grid_id = int(crop_grid[srow, scol])
+            #crop_grid_id = int(crop_grid[srow, scol])
             # print(crop_grid_id)
-            if crop_grid_id != 1 or soil_id == -8888:
-                continue
+            #if crop_grid_id != 1 or soil_id == -8888:
+            #    continue
 
             tcoords = {}
 
             if soil_id in soil_id_cache:
                 soil_profile = soil_id_cache[soil_id]
             else:
-                soil_profile = soil_io3.soil_parameters(soil_db_con, soil_id)
+                #soil_profile = soil_io3.soil_parameters(soil_db_con, soil_id)
+                soil_profile_group = soil_io3.get_soil_profile_group(soil_db_con, soil_id)
+                soil_profile = None
+                if len(soil_profile_group) > 0 and len(soil_profile_group[0]) > 0:
+                    most_layers = {"layers": None, "no": 0}
+                    for p in soil_profile_group[0][1]:
+                        if p["id"] == 1:
+                            soil_profile = p["layers"]
+                            break
+                        else:
+                            if len(p["layers"]) > most_layers["no"]:
+                                most_layers["layers"] = p["layers"]
+                                most_layers["no"] = len(p["layers"])
+                    if not soil_profile and most_layers["layers"]:
+                        soil_profile = most_layers["layers"]
+                    else:
+                        continue
+                else:
+                    continue
                 soil_id_cache[soil_id] = soil_profile
             if not soil_profile or len(soil_profile) == 0:
                 continue
@@ -678,14 +659,14 @@ def run_producer(server=None, port=None):
             if setup["StageTemperatureSum"]:
                 stage_ts = setup["StageTemperatureSum"].split('_')
                 stage_ts = [int(temp_sum) for temp_sum in stage_ts]
-                orig_stage_ts = env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"][
+                orig_stage_ts = env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"]["="][
                     "StageTemperatureSum"][0]
                 if len(stage_ts) != len(orig_stage_ts):
                     stage_ts = orig_stage_ts
                     print('The provided StageTemperatureSum array is not '
                           'sufficiently long. Falling back to original StageTemperatureSum')
 
-                env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"][
+                env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"]["="][
                     "StageTemperatureSum"][0] = stage_ts
 
             env_template["params"]["simulationParameters"]["UseNMinMineralFertilisingMethod"] = setup[

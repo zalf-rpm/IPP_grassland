@@ -5,7 +5,27 @@
             "is-winter-crop": false,
             "cropParams": {
                 "species": ["include-from-file", "crops/species/Grass_Species4.json"],
-                "cultivar": ["include-from-file", "crops/cultivars/Grass_CLV4.json"]
+                "cultivar": {
+                    "=": ["include-from-file", "crops/cultivars/Grass_CLV4.json"],
+                    "CropSpecificMaxRootingDepth": 0.30000001192092896,
+                    "DroughtStressThreshold": [1, 1, 1, 1, 1, 1],
+                    "SpecificLeafArea": [
+                        0.0061,
+                        0.0022,
+                        0.00212,
+                        0.00267,
+                        0.0035,
+                        0.00639
+                    ],
+                    "StageKcFactor": [
+                        0.56905,
+                        0.93248,
+                        1.0070299999999999,
+                        1.0561399999999999,
+                        0.9674200000000001,
+                        0.8468200000000001
+                    ]
+                }
             },
             "residueParams": ["include-from-file", "crops/residues/grass-ley.json"]
         }

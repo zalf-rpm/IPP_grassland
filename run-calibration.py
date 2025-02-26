@@ -52,7 +52,7 @@ def get_reader_writer_srs_from_channel(path_to_channel_binary, chan_name=None):
     return {"chan": chan, "reader_sr": reader_sr, "writer_sr": writer_sr}
 
 
-local_run = False
+local_run = True
 
 def update_config(config, argv, print_config=False, allow_new_keys=False):
     if len(argv) > 1:
@@ -69,22 +69,25 @@ def update_config(config, argv, print_config=False, allow_new_keys=False):
             print(config)
 
 
-def run_calibration(server=None, prod_port=None, cons_port=None):
+def run_calibration(server=None, prod_port=None, cons_port=None, channel_server=None, prod_channel_port=None, cons_channel_port=None):
     config = {
         "mode": "mbm-local-remote",
         "prod-port": prod_port if prod_port else "6666",  # local: 6667, remote 6666
         "cons-port": cons_port if cons_port else "7777",  # local: 6667, remote 6666
         "server": server if server else "login01.cluster.zalf.de",
-        "sim.json": "sim.json",
+        "channel-server": channel_server if channel_server else "localhost",
+        "prod-channel-port": prod_channel_port if prod_channel_port else "9998",
+        "cons-channel-port": cons_channel_port if cons_channel_port else "9999",
+        "sim.json": "sim_calibration.json",
         "crop.json": "crop.json",
         "site.json": "site.json",
-        "setups-file": "sim_setups_calibration.csv",
+        "setups-file": "sim_setups_calibration_VK.csv",
         "path_to_out": "out/",
         "run-setups": "[1]",
         "path_to_channel": "/home/berg/GitHub/mas-infrastructure/src/cpp/common/_cmake_debug/channel" if local_run else
         "/home/rpm/start_manual_test_services/GitHub/mas-infrastructure/src/cpp/common/_cmake_release/channel",
         "path_to_python": "python" if local_run else "/home/rpm/.conda/envs/clim4cast/bin/python",
-        "repetitions": "5",
+        "repetitions": "2000",
         "test_mode": "false",
         "all_nuts3_regions_one_by_one": False,
         "only_nuts3_region_ids": "[]",  # "[]",
@@ -118,6 +121,8 @@ def run_calibration(server=None, prod_port=None, cons_port=None):
         "mode=mbm-local-remote" if local_run else "mode=hpc-local-remote",
         f"server={config['server']}",
         f"port={config['prod-port']}",
+        f"channel-server={config['channel-server']}",
+        f"channel-port={config['prod-channel-port']}",
         f"setups-file={config['setups-file']}",
         f"run-setups={config['run-setups']}",
         #f"reader_sr={prod_chan_data['reader_sr']}",
@@ -134,6 +139,8 @@ def run_calibration(server=None, prod_port=None, cons_port=None):
         # "mode=remoteConsumer-remoteMonica",
         f"server={config['server']}",
         f"port={config['cons-port']}",
+        f"channel-server={config['channel-server']}",
+        f"channel-port={config['cons-channel-port']}",
         f"run-setups={config['run-setups']}",
         #f"writer_sr={cons_chan_data['writer_sr']}",
         f"path_to_out={config['path_to_out']}",
@@ -141,7 +148,8 @@ def run_calibration(server=None, prod_port=None, cons_port=None):
 
     # load observations
     year_to_grassmind_biomasses = defaultdict(list)
-    with (open("/home/berg/Desktop/valeh/rcp_26_grassmind/parameter_R216C507I11.bt") as file):
+    #with (open("/home/berg/Desktop/valeh/rcp_26_grassmind/parameter_R216C507I11.bt") as file):
+    with (open("/home/berg/Desktop/valeh/rcp_85_grassmind/parameter_R216C507I11.bt") as file):
         dialect = csv.Sniffer().sniff(file.read(), delimiters=';,\t')
         file.seek(0)
         reader = csv.reader(file, dialect)
@@ -150,10 +158,10 @@ def run_calibration(server=None, prod_port=None, cons_port=None):
         next(reader, None)
         start_date = date(2021, 1, 1)
         for row in reader:
-            doy = int(round(float(row[26])*365))
+            doy = int(round(float(row[0])*365))
             td = timedelta(days=doy)
             current_date = start_date + td
-            biomass = float(row[1])*10000
+            biomass = float(row[1])*10000*1000 # t/m^2 to kg/ha
             if current_date.month == 6 and current_date.day == 15:
                 year_to_grassmind_biomasses[current_date.year].append(biomass)
             elif current_date.month == 8 and current_date.day == 15:
@@ -182,18 +190,18 @@ def run_calibration(server=None, prod_port=None, cons_port=None):
 
     #con_man = common.ConnectionManager()
 
-    setups = monica_run_lib.read_sim_setups(config["setups-file"])
-    run_setups = json.loads(config["run-setups"])
-    if len(config["run-setups"]) < 1:
-        return
-    setup_id = run_setups[0]
-    setup = setups[setup_id]
+    #setups = monica_run_lib.read_sim_setups(config["setups-file"])
+    #run_setups = json.loads(config["run-setups"])
+    #if len(config["run-setups"]) < 1:
+    #    return
+    #setup_id = run_setups[0]
+    #setup = setups[setup_id]
     #cons_reader = con_man.try_connect(cons_chan_data["reader_sr"], cast_as=fbp_capnp.Channel.Reader, retry_secs=1)
     #prod_writer = con_man.try_connect(prod_chan_data["writer_sr"], cast_as=fbp_capnp.Channel.Writer, retry_secs=1)
 
     # configure MONICA setup for spotpy
-    observations = crop_to_observations[setup["crop-id"][:2]]
-    only_nuts3_region_ids = json.loads(config["only_nuts3_region_ids"])
+    #observations = crop_to_observations[setup["crop-id"][:2]]
+    #only_nuts3_region_ids = json.loads(config["only_nuts3_region_ids"])
 
     to_be_run_only_nuts3_region_ids = []
     #if config["all_nuts3_regions_one_by_one"]:
@@ -205,21 +213,22 @@ def run_calibration(server=None, prod_port=None, cons_port=None):
     #    to_be_run_only_nuts3_region_ids = [only_nuts3_region_ids]
 
     spot_setup = None
-    for current_only_nuts3_region_ids in to_be_run_only_nuts3_region_ids:
+    setups_in_sequence = list([[id] for id in json.loads(config["run-setups"])])
+    for current_only_nuts3_region_ids in setups_in_sequence:#to_be_run_only_nuts3_region_ids:
         # start timer 
         start_time = time.time()
 
         nuts3_region_folder_name = "-".join(map(str, current_only_nuts3_region_ids))
-        filtered_observations = observations
-        if len(current_only_nuts3_region_ids) > 0:
-            filtered_observations = list(filter(lambda d: d["id"] in current_only_nuts3_region_ids, observations))
-            if len(filtered_observations) == 0:
-                continue
+        #filtered_observations = observations
+        #if len(current_only_nuts3_region_ids) > 0:
+        #    filtered_observations = list(filter(lambda d: d["id"] in current_only_nuts3_region_ids, observations))
+        #    if len(filtered_observations) == 0:
+        #        continue
         if spot_setup:
             del spot_setup
         #print("selected weight for region:", weights[current_only_nuts3_region_ids[0]], flush=True)
-        spot_setup = calibration_spotpy_setup_MONICA.spot_setup(params, filtered_observations, prod_writer, cons_reader,
-                                                                path_to_out_folder, current_only_nuts3_region_ids, weights[current_only_nuts3_region_ids[0]])
+        spot_setup = calibration_spotpy_setup_MONICA.spot_setup(params, year_to_grassmind_biomasses, #prod_writer, cons_reader,
+                                                                path_to_out_folder)#, current_only_nuts3_region_ids, weights[current_only_nuts3_region_ids[0]])
 
         rep = int(config["repetitions"]) #initial number was 10
         results = []
