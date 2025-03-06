@@ -111,7 +111,7 @@ class spot_setup(object):
         self.cons_socket.setsockopt_string(zmq.IDENTITY, self.shared_id)
         self.cons_socket.RCVTIMEO = 60000
         self.cons_socket.connect(f"tcp://{monicas_host}:{monicas_out_port}")
-        self.calib_row_cols = json.loads(calib_row_cols)
+        self.calib_row_cols = calib_row_cols
         self.path_to_out = "out"
         self.path_to_prod_out_file = f"{self.path_to_out}/producer.out"
         self.path_to_cons_out_file = f"{self.path_to_out}/consumer.out"

@@ -1,3 +1,14 @@
+#This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
+# Authors:
+# Michael Berg-Mohnicke <michael.berg@zalf.de>
+#
+# Maintainers:
+# Currently maintained by the authors.
+#
+# Copyright (C: Leibniz Centre for Agricultural Landscape Research (ZALF)
 
 from datetime import datetime, date, timedelta
 from collections import defaultdict
@@ -50,7 +61,7 @@ def run_calibration(server=None, prod_port=None, cons_port=None, channel_server=
         "run-setups": "[1]",
         "path_to_python": "python" if local_run else "/home/rpm/.conda/envs/clim4cast/bin/python",
         "repetitions": "2000",
-        "test_mode": "false",
+        "path_to_grassmind_biomass_file": "/home/berg/Desktop/valeh/rcp_85_grassmind/parameter_R{row:03d}C{col:03d}I11.bt",
     }
 
     update_config(config, sys.argv, print_config=True, allow_new_keys=False)
@@ -65,50 +76,8 @@ def run_calibration(server=None, prod_port=None, cons_port=None, channel_server=
     with open(path_to_out_file, "a") as _:
         _.write(f"{datetime.now()} config: {config}\n")
 
-    # load observations
-    year_to_grassmind_biomasses = defaultdict(list)
-    #with (open("/home/berg/Desktop/valeh/rcp_26_grassmind/parameter_R216C507I11.bt") as file):
-    with (open("/home/berg/Desktop/valeh/rcp_85_grassmind/parameter_R216C507I11.bt") as file):
-        dialect = csv.Sniffer().sniff(file.read(), delimiters=';,\t')
-        file.seek(0)
-        reader = csv.reader(file, dialect)
-        next(reader, None)  # skip the header
-        next(reader, None)
-        next(reader, None)
-        start_date = date(2021, 1, 1)
-        for row in reader:
-            doy = int(round(float(row[0])*365))
-            td = timedelta(days=doy)
-            current_date = start_date + td
-            biomass = float(row[1])*10000*1000 # t/m^2 to kg/ha
-            if current_date.month == 6 and current_date.day == 15:
-                year_to_grassmind_biomasses[current_date.year].append(biomass)
-            elif current_date.month == 8 and current_date.day == 15:
-                year_to_grassmind_biomasses[current_date.year].append(biomass)
-            elif current_date.month == 10 and current_date.day == 15:
-                year_to_grassmind_biomasses[current_date.year].append(biomass)
-
-    # read parameters which are to be calibrated
-    params = []
-    with open("calibratethese.csv") as params_csv:
-        dialect = csv.Sniffer().sniff(params_csv.read(), delimiters=';,\t')
-        params_csv.seek(0)
-        reader = csv.reader(params_csv, dialect)
-        next(reader, None)  # skip the header
-        for row in reader:
-            p = {"name": row[0]}
-            if len(row[1]) > 0:
-                p["array"] = int(row[1])
-            for n, i in [("low", 2), ("high", 3), ("step", 4), ("optguess", 5), ("minbound", 6), ("maxbound", 7)]:
-                if len(row[i]) > 0:
-                    p[n] = float(row[i])
-            if len(row) == 9 and len(row[8]) > 0:
-                p["derive_function"] = lambda _, _2: eval(row[8])
-            params.append(p)
-
-    spot_setup = None
     for setup_id in json.loads(config["run-setups"]):
-        # start timer 
+        spot_setup = None
         start_time = time.time()
 
         setups = monica_run_lib.read_sim_setups(config["setups-file"])
@@ -117,21 +86,58 @@ def run_calibration(server=None, prod_port=None, cons_port=None, channel_server=
         if not setup:
             continue
 
-        setup_folder_name = f"setup_{setup_id}"
-        #filtered_observations = observations
-        #if len(current_only_nuts3_region_ids) > 0:
-        #    filtered_observations = list(filter(lambda d: d["id"] in current_only_nuts3_region_ids, observations))
-        #    if len(filtered_observations) == 0:
-        #        continue
+        srow = int(setup["row"])
+        scol = int(setup["col"])
+
+        # load observations
+        year_to_grassmind_biomasses = defaultdict(list)
+        #with (open("/home/berg/Desktop/valeh/rcp_26_grassmind/parameter_R216C507I11.bt") as file):
+        with (open(config["path_to_grassmind_biomass_file"].format(row=srow, col=scol)) as file):
+            dialect = csv.Sniffer().sniff(file.read(), delimiters=';,\t')
+            file.seek(0)
+            reader = csv.reader(file, dialect)
+            next(reader, None)  # skip the header
+            next(reader, None)
+            next(reader, None)
+            start_date = date(2021, 1, 1)
+            for row in reader:
+                doy = int(round(float(row[0])*365))
+                td = timedelta(days=doy)
+                current_date = start_date + td
+                biomass = float(row[1])*10000*1000 # t/m^2 to kg/ha
+                if current_date.month == 6 and current_date.day == 15:
+                    year_to_grassmind_biomasses[current_date.year].append(biomass)
+                elif current_date.month == 8 and current_date.day == 15:
+                    year_to_grassmind_biomasses[current_date.year].append(biomass)
+                elif current_date.month == 10 and current_date.day == 15:
+                    year_to_grassmind_biomasses[current_date.year].append(biomass)
+
+        # read parameters which are to be calibrated
+        params = []
+        with open("calibratethese.csv") as params_csv:
+            dialect = csv.Sniffer().sniff(params_csv.read(), delimiters=';,\t')
+            params_csv.seek(0)
+            reader = csv.reader(params_csv, dialect)
+            next(reader, None)  # skip the header
+            for row in reader:
+                p = {"name": row[0]}
+                if len(row[1]) > 0:
+                    p["array"] = int(row[1])
+                for n, i in [("low", 2), ("high", 3), ("step", 4), ("optguess", 5), ("minbound", 6), ("maxbound", 7)]:
+                    if len(row[i]) > 0:
+                        p[n] = float(row[i])
+                if len(row) == 9 and len(row[8]) > 0:
+                    p["derive_function"] = lambda _, _2: eval(row[8])
+                params.append(p)
+
         if spot_setup:
             del spot_setup
-        #print("selected weight for region:", weights[current_only_nuts3_region_ids[0]], flush=True)
         spot_setup = spotpy_monica_connector.spot_setup(params,
                                                         year_to_grassmind_biomasses,
                                                         monicas_host=config["server"],
                                                         monicas_in_port=config["prod-port"],
                                                         monicas_out_port=config["cons-port"],
-                                                        calib_row_cols=config["calib_row_cols"],
+                                                        calib_row_cols=[(srow, scol)],
                                                         setup_id=setup_id,
                                                         setup=setup,
                                                         path_to_out=path_to_out_folder,
@@ -140,7 +146,7 @@ def run_calibration(server=None, prod_port=None, cons_port=None, channel_server=
         rep = int(config["repetitions"]) #initial number was 10
         results = []
         #Set up the sampler with the model above
-        sampler = spotpy.algorithms.sceua(spot_setup, dbname=f"{path_to_out_folder}/{setup_folder_name}_SCEUA_monica_results", dbformat="csv")
+        sampler = spotpy.algorithms.sceua(spot_setup, dbname=f"{path_to_out_folder}/SCEUA_monica_results", dbformat="csv")
         # sampler = spotpy.algorithms.dream(spot_setup, dbname=f"{path_to_out_folder}/{nuts3_region_folder_name}_DREAM_monica_results", dbformat="csv")
         #Run the sampler to produce the paranmeter distribution
         #and identify optimal parameters based on objective function
@@ -203,7 +209,7 @@ def run_calibration(server=None, prod_port=None, cons_port=None, channel_server=
             print("******************************\n", file=stream)
 
 
-        path_to_best_out_file = f"{path_to_out_folder}/{setup_folder_name}_best.out"
+        path_to_best_out_file = f"{path_to_out_folder}/best.out"
         with open(path_to_best_out_file, "a") as _:
             print_status_final(sampler.status, _)
 
@@ -211,7 +217,7 @@ def run_calibration(server=None, prod_port=None, cons_port=None, channel_server=
         #    _.write(f"{datetime.now()} results written run-cal\n\n")
 
         #Extract the parameter samples from distribution
-        results = spotpy.analyser.load_csv_results(f"{path_to_out_folder}/{setup_folder_name}_SCEUA_monica_results")
+        results = spotpy.analyser.load_csv_results(f"{path_to_out_folder}/SCEUA_monica_results")
 
         # Plot how the objective function was minimized during sampling
         #font = {"family": "calibri",
@@ -223,7 +229,7 @@ def run_calibration(server=None, prod_port=None, cons_port=None, channel_server=
         plt.show()
         plt.ylabel("Weighted RMSE")
         plt.xlabel("Iteration")
-        fig.savefig(f"{path_to_out_folder}/{setup_folder_name}_SCEUA_objectivefunctiontrace_MONICA.png", dpi=150)
+        fig.savefig(f"{path_to_out_folder}/SCEUA_objectivefunctiontrace_MONICA.png", dpi=150)
         plt.close(fig)
 
         # OW addition
@@ -254,9 +260,8 @@ def run_calibration(server=None, prod_port=None, cons_port=None, channel_server=
         #plt.close(fig)
 
         del results
-    # kill the two channels and the producer and consumer
 
-    print("sampler_MONICA.py finished")
+    print("run-calibration.py finished")
 
 if __name__ == "__main__":
     run_calibration()
