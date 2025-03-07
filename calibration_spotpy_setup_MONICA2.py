@@ -50,6 +50,7 @@ PATHS = {
         "path-to-climate-dir": "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/common/data/climate/",
         "monica-path-to-climate-dir": "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/common/data/climate/",
         "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
+        "path-debug-write-folder": "/out/debug-out/",
         "path-to-output-dir": "/out/out/",
         "path-to-csv-output-dir": "/out/csv-out/"
     },
@@ -106,7 +107,7 @@ class spot_setup(object):
         self.context = zmq.Context()
         self.prod_socket = self.context.socket(zmq.PUSH)
         self.prod_socket.connect(f"tcp://{monicas_host}:{monicas_in_port}")
-        self.cons_socket = self.context.socket(zmq.PULL)
+        self.cons_socket = self.context.socket(zmq.DEALER)
         self.shared_id = str(uuid.uuid4())
         self.cons_socket.setsockopt_string(zmq.IDENTITY, self.shared_id)
         self.cons_socket.RCVTIMEO = 60000

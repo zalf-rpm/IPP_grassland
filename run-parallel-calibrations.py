@@ -32,10 +32,10 @@ def update_config(config, argv, print_config=False, allow_new_keys=False):
 
 def run_parallel_calibrations(server=None, prod_port=None, cons_port=None):
     config = {
-        "mode": "mbm-local-remote",
+        "mode": "mbm-local-local", #"mbm-local-remote",
         "prod-port": prod_port if prod_port else "6666",  # local: 6667, remote 6666
         "cons-port": cons_port if cons_port else "7777",  # local: 6667, remote 6666
-        "server": server if server else "login01.cluster.zalf.de",
+        "server": server if server else "localhost", #"login01.cluster.zalf.de",
         "setups-file": "sim_setups_calibration_VK.csv",
         "path_to_out": "out/",
         "run-setups": "[1-3]",
@@ -63,7 +63,7 @@ def run_parallel_calibrations(server=None, prod_port=None, cons_port=None):
             f"mode={config['mode']}",
             f"server={config['server']}",
             f"prod-port={config['prod-port']}",
-            f"cons-port={config['prod-port']}",
+            f"cons-port={config['cons-port']}",
             f"setups-file={config['setups-file']}",
             f"run-setups=[{setup_id}]",
             f"path_to_out={config['path_to_out']}/calib_{setup_id}/",
