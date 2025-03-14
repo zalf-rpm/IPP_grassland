@@ -103,17 +103,17 @@ class spot_setup(object):
         self.params = []
         self.observations = observations
         self.obs_flat_list = flatten_biomasses_dict(observations)
+        self.path_to_out = path_to_out
         self.path_to_prod_out_file = path_to_out + "/spot_setup.out"
         self.context = zmq.Context()
         self.prod_socket = self.context.socket(zmq.PUSH)
         self.prod_socket.connect(f"tcp://{monicas_host}:{monicas_in_port}")
         self.cons_socket = self.context.socket(zmq.DEALER)
         self.shared_id = str(uuid.uuid4())
-        self.cons_socket.setsockopt_string(zmq.IDENTITY, self.shared_id)
+        self.cons_socket.setsockopt_string(zmq.ROUTING_ID, self.shared_id)
         self.cons_socket.RCVTIMEO = 60000
         self.cons_socket.connect(f"tcp://{monicas_host}:{monicas_out_port}")
         self.calib_row_cols = calib_row_cols
-        self.path_to_out = "out"
         self.path_to_prod_out_file = f"{self.path_to_out}/producer.out"
         self.path_to_cons_out_file = f"{self.path_to_out}/consumer.out"
         self.gdf = gpd.read_file(NUTS1_REGIONS)
@@ -328,7 +328,8 @@ class spot_setup(object):
             "sim": sim_json,
             "climate": ""
         })
-        self.env_template["sharedId"] = self.shared_id
+        if self.shared_id:
+            self.env_template["sharedId"] = self.shared_id
         self.env_template["csvViaHeaderOptions"] = sim_json["climate.csv-options"]
         self.env_template["params"]["userCropParameters"]["__enable_T_response_leaf_expansion__"] = self.setup[
             "LeafExtensionModifier"]
@@ -401,7 +402,7 @@ class spot_setup(object):
         # unknown_soil_ids = set()
         soil_id_cache = {}
         for srow, scol in self.calib_row_cols:
-            print("srow:", srow, "scol:", scol)
+            #print("srow:", srow, "scol:", scol)
 
             soil_id = int(self.soil_grid[srow, scol])
             if soil_id == self.nodata_value:
@@ -436,11 +437,17 @@ class spot_setup(object):
                     if not soil_profile and most_layers["layers"]:
                         soil_profile = most_layers["layers"]
                     else:
+                        with open(self.path_to_prod_out_file, "a") as _:
+                            _.write(f"no most_layers for soil_profile with id {soil_id}\n")
                         continue
                 else:
+                    with open(self.path_to_prod_out_file, "a") as _:
+                        _.write(f"soil_profile for id {soil_id} has no valid layers\n")
                     continue
                 soil_id_cache[soil_id] = soil_profile
             if not soil_profile or len(soil_profile) == 0:
+                with open(self.path_to_prod_out_file, "a") as _:
+                    _.write(f"soil_profile for id {soil_id} not valid\n")
                 continue
             else:
                 # print("soil:", soil_profile)
@@ -579,7 +586,7 @@ class spot_setup(object):
                     hist_subpath_to_csv = hist_subpath_to_csv.replace("//", "/")
                 self.env_template["pathToClimateCSV"].insert(0, self.paths["monica-path-to-climate-dir"] + self.setup[
                     "climate_path_to_csvs"] + "/" + hist_subpath_to_csv)
-            print("pathToClimateCSV:", self.env_template["pathToClimateCSV"])
+            #print("pathToClimateCSV:", self.env_template["pathToClimateCSV"])
 
             self.env_template["customId"] = {
                 "setup_id": self.setup_id,
@@ -587,7 +594,8 @@ class spot_setup(object):
                 "crow": int(crow), "ccol": int(ccol),
                 "soil_id": soil_id,
                 "env_id": sent_env_count,
-                "nodata": False
+                "nodata": False,
+                "shared-id": self.shared_id,
             }
 
             sent_env_count += 1
@@ -609,8 +617,7 @@ class spot_setup(object):
             # print("crows/cols:", crows_cols)
         # cs__.close()
         stop_setup_time = time.perf_counter()
-        print("\nSetup ", self.setup_id, ":", sent_env_count, " envs took ", (stop_setup_time - start_setup_time),
-              " seconds")
+        #print("\nSetup ", self.setup_id, ":", sent_env_count, " envs took ", (stop_setup_time - start_setup_time), " seconds")
 
     def run_consumer(self):
         year_to_biomasses = defaultdict(list)

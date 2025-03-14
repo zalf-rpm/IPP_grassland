@@ -10,7 +10,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/out/1_SCEUA_monica_results.csv">
+        <entry key="/out_/calib_18/SCEUA_monica_results.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

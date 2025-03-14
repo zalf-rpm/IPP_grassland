@@ -55,18 +55,19 @@ def run_calibration(server=None, prod_port=None, cons_port=None, channel_server=
         "sim.json": "sim_calibration.json",
         "crop.json": "crop.json",
         "site.json": "site.json",
-        "calib_row_cols": "[[216,507]]",
+        "row": None,
+        "col": None,
         "setups-file": "sim_setups_calibration_VK.csv",
         "path_to_out": "out/",
         "run-setups": "[1]",
         "path_to_python": "python" if local_run else "/home/rpm/.conda/envs/clim4cast/bin/python",
         "repetitions": "2000",
-        "path_to_grassmind_biomass_file": "/home/berg/Desktop/valeh/rcp_85_grassmind/parameter_R{row:03d}C{col:03d}I11.bt",
+        "path_to_grassmind_biomass_file": None,
     }
 
     update_config(config, sys.argv, print_config=True, allow_new_keys=False)
 
-    path_to_out_folder = config['path_to_out']
+    path_to_out_folder = config["path_to_out"]
     if not os.path.exists(path_to_out_folder):
         try:
             os.makedirs(path_to_out_folder)
@@ -86,8 +87,8 @@ def run_calibration(server=None, prod_port=None, cons_port=None, channel_server=
         if not setup:
             continue
 
-        srow = int(setup["row"])
-        scol = int(setup["col"])
+        srow = int(config["row"])
+        scol = int(config["col"])
 
         # load observations
         year_to_grassmind_biomasses = defaultdict(list)
@@ -141,7 +142,7 @@ def run_calibration(server=None, prod_port=None, cons_port=None, channel_server=
                                                         setup_id=setup_id,
                                                         setup=setup,
                                                         path_to_out=path_to_out_folder,
-                                                        mode="mbm-local-remote")#"hpc-local-remote")
+                                                        mode=config["mode"])
 
         rep = int(config["repetitions"]) #initial number was 10
         results = []
