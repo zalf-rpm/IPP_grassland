@@ -45,7 +45,7 @@ def run_parallel_calibrations(server=None, prod_port=None, cons_port=None):
         "sm": "10",
         "rcp": "26",
         "path_to_grassmind_biomass_files": "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/rpm/projects/monica/project/ipp_grassland/rcp{rcp}/{sm}/" \
-            if local_run else "/project/ipp_grassland/rcp{rcp}/{sm}/",
+            if local_run else "/project/rcp{rcp}/{sm}/",
         "path_to_python": "python" if local_run else "/home/rpm/.conda/envs/clim4cast/bin/python",
         "repetitions": "10",
     }
