@@ -15,7 +15,7 @@ import os
 import subprocess as sp
 import sys
 
-local_run = True
+local_run = False
 
 def update_config(config, argv, print_config=False, allow_new_keys=False):
     if len(argv) > 1:
@@ -89,7 +89,7 @@ def run_parallel_calibrations(server=None, prod_port=None, cons_port=None):
             procs = []
 
     # output best parameters for
-    path_to_best_params_csv = f"{config['path_to_out']}/best_params_setup{setup_id}_rcp{rcp}.json"
+    path_to_best_params_csv = f"{config['path_to_out']}/best_params_setup-{setup_id}_sm-{sm}_rcp-{rcp}.json"
     with open(path_to_best_params_csv, "a") as f:
         f.write(f"row, col, sm, SpecificLeafArea, StageKcFactor, DroughtStressThreshold, CropSpecificMaxRootingDepth\n")
 

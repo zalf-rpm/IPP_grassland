@@ -436,9 +436,9 @@ class spot_setup(object):
                                 most_layers["no"] = len(p["layers"])
                     if not soil_profile and most_layers["layers"]:
                         soil_profile = most_layers["layers"]
-                    else:
+                    elif not soil_profile:
                         with open(self.path_to_prod_out_file, "a") as _:
-                            _.write(f"no most_layers for soil_profile with id {soil_id}\n")
+                            _.write(f"no most_layers for soil_profile with id {soil_id}\n\most_layers: {most_layers}")
                         continue
                 else:
                     with open(self.path_to_prod_out_file, "a") as _:

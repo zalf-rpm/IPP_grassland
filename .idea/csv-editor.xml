@@ -10,6 +10,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/out/rcp26/10/calib_setup1_r220_c403/SCEUA_monica_results.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/out_/calib_18/SCEUA_monica_results.csv">
           <value>
             <Attribute>
