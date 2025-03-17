@@ -34,7 +34,7 @@ def update_config(config, argv, print_config=False, allow_new_keys=False):
 
 def run_parallel_calibrations(server=None, prod_port=None, cons_port=None):
     config = {
-        "mode": "mbm-local-remote",#"mbm-local-local", #"mbm-local-remote",
+        "mode": "hpc-local-remote", #"mbm-local-remote",#"mbm-local-local", #"mbm-local-remote",
         "prod-port": prod_port if prod_port else "6666",  # local: 6667, remote 6666
         "cons-port": cons_port if cons_port else "7777",  # local: 6667, remote 6666
         "server": server if server else "login01.cluster.zalf.de",
