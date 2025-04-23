@@ -17,13 +17,6 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/out_/calib_18/SCEUA_monica_results.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="/sim_setups_VK.csv">
           <value>
             <Attribute>
