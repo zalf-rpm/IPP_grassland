@@ -68,7 +68,7 @@ standalone_config_mbm_win = {
     "path_to_monica_parameters_dir": r"C:\Users\berg\GitHub\monica-parameters",
     "grassmind_current_working_dir": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26",
     "path_to_formind_exe": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind.exe",
-    "path_to_full_weather_file": r"C:/Users/berg/Desktop/valeh/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
+    "path_to_full_weather_file": "C:/Users/berg/Desktop/valeh/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
     "path_to_grassmind_weather_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters\Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
     "path_to_grassmind_soil_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
     "path_to_grassmind_param_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
@@ -78,18 +78,16 @@ standalone_config_mbm_win = {
 standalone_config_vk_win = {
     "row": "220",
     "col": "403",
-    "path_to_channel": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/channel.exe",
-    "path_to_daily_monica_fbp_component": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
-    #"path_to_monica_parameters_dir": "/home/berg/GitHub/IPP_grassland/data/params", #"/home/berg/GitHub/monica-parameters",
-    "path_to_monica_parameters_dir": r"C:\Users\berg\GitHub\monica-parameters",
-    "grassmind_current_working_dir": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26",
-    "path_to_formind_exe": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind.exe",
-    "path_to_full_weather_file": r"C:/Users/berg/Desktop/valeh/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
-    "path_to_grassmind_weather_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters\Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
-    "path_to_grassmind_soil_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
-    "path_to_grassmind_param_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
-    "path_to_result_div": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.div",
-    "path_to_result_bt": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.bt"
+    "path_to_channel": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/channel.exe",
+    "path_to_daily_monica_fbp_component": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
+    "path_to_monica_parameters_dir": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
+    "path_to_formind_exe": "E:/4Zalf_10102024_rcp26/formind.exe",
+    "path_to_full_weather_file": "E:/4Zalf_10102024_rcp26/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
+    "path_to_grassmind_weather_file": "E:/4Zalf_10102024_rcp26/formind_parameters\Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
+    "path_to_grassmind_soil_file": "E:/4Zalf_10102024_rcp26/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
+    "path_to_grassmind_param_file": "E:/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
+    "path_to_result_div": "E:/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.div",
+    "path_to_result_bt": "E:/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.bt"
 }
 async def main(config: dict):
     common.update_config(config, sys.argv, print_config=True, allow_new_keys=False)
@@ -101,7 +99,7 @@ async def main(config: dict):
     row = int(config["row"])
     col = int(config["col"])
     paths = {
-        "cwd": config["grassmind_current_working_dir"],
+        #"cwd": config["grassmind_current_working_dir"],
         "full_weather": config["path_to_full_weather_file"].format(row=row, col=col),
         "weather": config["path_to_grassmind_weather_file"].format(row=row, col=col),
         "soil": config["path_to_grassmind_soil_file"].format(row=row, col=col),
@@ -369,7 +367,9 @@ def run_grassmind_on_monica_state(old_state, day_index, grassmind_climate, paths
     with open(paths["soil"], "wt") as f:
         f.write(create_grassmind_soil_from_state(old_state))
 
-    p = sp.Popen([paths["formind"], paths["params"]], cwd=paths["cwd"], stdout=subprocess.DEVNULL)
+    p = sp.Popen([paths["formind"], paths["params"]], 
+                 #cwd=paths["cwd"], 
+                 stdout=subprocess.DEVNULL)
     p.wait()
 
     # read .div file to get the current fractions
@@ -487,4 +487,4 @@ def create_cutting_event(cutting_spec: list[dict]):
 
 
 if __name__ == '__main__':
-    asyncio.run(capnp.run(main(standalone_config_mbm_win)))
+    asyncio.run(capnp.run(main(standalone_config_vk_win)))
