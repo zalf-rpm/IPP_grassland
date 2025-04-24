@@ -44,6 +44,8 @@ import monica_params_capnp
 import monica_state_capnp
 
 standalone_config = {
+    "row": "220",
+    "col": "403",
     "path_to_channel": "/home/berg/GitHub/monica/_cmake_debug/common/channel",
     "path_to_daily_monica_fbp_component": "/home/berg/GitHub/monica/_cmake_debug/daily-monica-fbp-component",
     #"path_to_monica_parameters_dir": "/home/berg/GitHub/IPP_grassland/data/params", #"/home/berg/GitHub/monica-parameters",
@@ -64,15 +66,17 @@ async def main(config: dict):
     channels = []
     procs = []
 
+    row = int(config["row"])
+    col = int(config["col"])
     paths = {
         "cwd": config["grassmind_current_working_dir"],
-        "full_weather": config["path_to_full_weather_file"].format(row=220, col=403),
-        "weather": config["path_to_grassmind_weather_file"].format(row=220, col=403),
-        "soil": config["path_to_grassmind_soil_file"].format(row=220, col=403),
-        "params": config["path_to_grassmind_param_file"].format(row=220, col=403),
-        "formind": config["path_to_formind_exe"].format(row=220, col=403),
-        "div": config["path_to_result_div"].format(row=220, col=403),
-        "bt": config["path_to_result_bt"].format(row=220, col=403),
+        "full_weather": config["path_to_full_weather_file"].format(row=row, col=col),
+        "weather": config["path_to_grassmind_weather_file"].format(row=row, col=col),
+        "soil": config["path_to_grassmind_soil_file"].format(row=row, col=col),
+        "params": config["path_to_grassmind_param_file"].format(row=row, col=col),
+        "formind": config["path_to_formind_exe"].format(row=row, col=col),
+        "div": config["path_to_result_div"].format(row=row, col=col),
+        "bt": config["path_to_result_bt"].format(row=row, col=col),
     }
 
     try:
@@ -132,7 +136,7 @@ async def main(config: dict):
         # start crop service
         procs.append(sp.Popen([
             "poetry", "run", "python", "-m", "zalfmas_services.crop.monica_crop_service",
-            "path_to_monica_parameters=/home/berg/GitHub/monica-parameters", "port=9997", "srt=crop"
+            f"path_to_monica_parameters={config['path_to_monica_parameters_dir']}", "port=9997", "srt=crop"
         ]))
 
         # write the config to the config channel
@@ -144,16 +148,12 @@ async def main(config: dict):
             site_json = json.load(_)
         with open("crop.json") as _:
             crop_json = json.load(_)
-        #sim_json["include-file-base-path"] = "/home/berg/GitHub/monica-parameters"
-        #sim_json["include-file-base-path"] = "/home/berg/GitHub/mas-infrastructure/src/python/scratch_code/grassmind_monica_coupling/params"
         env_template = monica_io.create_env_json_from_json_config({
             "crop": crop_json,
             "site": site_json,
             "sim": sim_json,
             "climate": ""
         })
-        #env_template["csvViaHeaderOptions"] = sim_json["climate.csv-options"]
-        #env_template["climateCSV"] = climate_csv
 
         env_writer = await con_man.try_connect(port_srs["in"]["env"], cast_as=fbp_capnp.Channel.Writer)
         env = common_capnp.StructuredText.new_message(value=json.dumps(env_template),
@@ -162,12 +162,13 @@ async def main(config: dict):
         print("send env on env channel")
 
         crop_planted = False
-        crop_service_sr = "capnp://10.10.24.222:9997/crop"
+        crop_service_sr = "capnp://localhost:9997/crop"
         crop_service = await con_man.try_connect(crop_service_sr, cast_as=crop_capnp.Service)
         cat_to_name_to_crop = defaultdict(dict)
         for e in (await crop_service.entries()).entries:
             cat_to_name_to_crop[e.categoryId][e.name] = e.ref
         print("got all crop service entries")
+        #time.sleep(5)
 
         state_reader = await con_man.try_connect(port_srs["out"]["serialized_state"], cast_as=fbp_capnp.Channel.Reader)
         state_writer = await con_man.try_connect(port_srs["in"]["serialized_state"], cast_as=fbp_capnp.Channel.Writer)
@@ -295,15 +296,6 @@ async def main(config: dict):
         await state_writer.close()
         time.sleep(3)
 
-        #output_reader = await con_man.try_connect(port_srs["out"]["result"], cast_as=fbp_capnp.Channel.Reader)
-        #out_msg = await output_reader.read()
-        #if out_msg.which() == "value":
-        #    out_ip = out_msg.value.as_struct(fbp_capnp.IP)
-        #    c = out_ip.content.as_struct(common_capnp.StructuredText)
-        #    print(c)
-        #else:
-        #    print("received done on output channel")
-
         for channel in channels:
             channel.terminate()
         print(f"{os.path.basename(__file__)}: all channels terminated")
@@ -319,6 +311,94 @@ async def main(config: dict):
             channel.terminate()
         for proc in procs:
             proc.terminate()
+
+
+
+def run_grassmind_on_monica_state(old_state, day_index, grassmind_climate, paths):
+    if not old_state.modelState._has("currentCropModule"):
+        return old_state, None
+
+    new_state = old_state
+    if not hasattr(run_grassmind_on_monica_state, "initial_param_values"):
+        run_grassmind_on_monica_state.initial_param_values = {
+            "SpecificLeafArea": list(old_state.modelState.currentCropModule.cultivarParams.specificLeafArea),
+            "StageKcFactor": list(old_state.modelState.currentCropModule.cultivarParams.stageKcFactor),
+            "DroughtStressThreshold": list(old_state.modelState.currentCropModule.cultivarParams.droughtStressThreshold),
+            "CropSpecificMaxRootingDepth": float(old_state.modelState.currentCropModule.cultivarParams.cropSpecificMaxRootingDepth),
+        }
+
+    with open(paths["weather"], "wt") as f:
+        f.write(grassmind_climate[0])
+        for line in grassmind_climate[day_index+1:day_index+1 + 365]:
+            f.write(line)
+            f.write("\n")
+
+    with open(paths["soil"], "wt") as f:
+        f.write(create_grassmind_soil_from_state(old_state))
+
+    p = sp.Popen([paths["formind"], paths["params"]], cwd=paths["cwd"], stdout=subprocess.DEVNULL)
+    p.wait()
+
+    # read .div file to get the current fractions
+    rel_species_abundance = None
+    with open(paths["div"]) as f:
+        lines = f.readlines()
+        rel_species_abundance = list(map(float, lines[4].split("\t")[2:6]))
+    with open(paths["bt"]) as f:
+        lines = f.readlines()
+        total_biomass_kg_per_ha = float(lines[4].split("\t")[1])*1000.0 # t -> kg ha-1
+
+    if rel_species_abundance:
+        params = calc_community_level_params(rel_species_abundance)
+        print(old_state.modelState.currentStepDate, "community params:", params)
+        new_state = old_state.as_builder()
+        cps = new_state.modelState.currentCropModule.cultivarParams
+        cps.specificLeafArea = list(map(lambda v: v * params["SpecificLeafArea"],
+                                        run_grassmind_on_monica_state.initial_param_values["SpecificLeafArea"]))
+        print("new specificLeafArea:", cps.specificLeafArea)
+        cps.stageKcFactor = list(map(lambda v: v * params["StageKcFactor"],
+                                     run_grassmind_on_monica_state.initial_param_values["StageKcFactor"]))
+        print("new stageKcFactor:", cps.stageKcFactor)
+        cps.droughtStressThreshold = list(map(lambda v: v * params["DroughtStressThreshold"],
+                                              run_grassmind_on_monica_state.initial_param_values[
+                                                  "DroughtStressThreshold"]))
+        print("new droughtStressThreshold:", cps.droughtStressThreshold)
+        cps.cropSpecificMaxRootingDepth = params["CropSpecificMaxRootingDepth"]
+        print("new cropSpecificMaxRootingDepth:", cps.cropSpecificMaxRootingDepth)
+    return new_state, total_biomass_kg_per_ha
+
+def create_grassmind_soil_from_state(state):
+    sc = state.modelState.soilColumn
+    sb = io.StringIO()
+    sb.write("Silt\tClay\tSand\n")
+    silt = 1 - sc.layers[0].sps.soilSandContent - sc.layers[0].sps.soilClayContent
+    sb.write(f"{silt}\t{sc.layers[0].sps.soilClayContent}\t{sc.layers[0].sps.soilSandContent}\n")
+    sb.write("\n")
+    sb.write("Layer\tRWC[-]\tFC[V%]\tPWP[V%]\tMinN[gm-2]\tPOR[V%]\tKS[mm/d]\n")
+    for i, l in enumerate(sc.layers):
+        n_kg_per_m3 = l.soilNO3 + l.soilNO2 + l.soilNH4
+        n_kg_per_m2 = n_kg_per_m3 * 0.01 # m3 -> m2 (0.1m layer thickness)
+        n_g_per_m2 = n_kg_per_m2 * 1000.0 # kg -> g
+        ks = l.sps._get("lambda") * 1000.0 # m/d -> mm/d
+        sb.write(f"{i}\t{round(l.soilMoistureM3, 5)}\t{round(l.sps.fieldCapacity*100.0, 2)}\t{round(l.sps.permanentWiltingPoint*100.0,2)}\t{round(n_g_per_m2, 5)}\t{round(l.sps.saturation*100.0, 2)}\t{round(ks,2)}\n")
+    return sb.getvalue()
+
+def calc_community_level_params(s_i_s):
+    p_i_s = {
+        "SpecificLeafArea": {"S_PFTs": [0.36, 0.47, 0.03, 0.36], "min": 0.6, "max": 1.4, "values": [0.8, 0.75, 0.7, 0.6]},
+        "StageKcFactor": {"S_PFTs": [0.36, 0.16, 0.03, 0.4], "min": 0.6, "max": 1.4, "values": [1.3, 1.1, 0.91, 0.83]},
+        "DroughtStressThreshold": {"S_PFTs": [0.0, 0.16, 0.78, 0.58], "min": 0.2, "max": 1.0, "values": [0.35, 0.5, 0.75, 0.9]},
+        "CropSpecificMaxRootingDepth": {"S_PFTs": [0.36, 0.31, 0.03, 0.98], "min": 0.1, "max": 0.3, "values": [0.15, 0.2, 0.25, 0.3]},
+    }
+    res = {}
+    for param_name, ps in p_i_s.items():
+        sum_sip_x_si_x_pi = 0
+        sum_sip_x_si = 0
+        for i, s_i_p in enumerate(ps["S_PFTs"]):
+            sum_sip_x_si_x_pi += s_i_p * s_i_s[i] * ps["values"][i]
+            sum_sip_x_si += s_i_p * s_i_s[i]
+        res[param_name] = ps["min"] + (sum_sip_x_si_x_pi/sum_sip_x_si)*(ps["max"] - ps["min"])
+    return res
 
 def create_save_state_event(no_of_prev_days_to_serialize=10, serialize_as_json=False):
     return lambda at: mgmt_capnp.Event.new_message(type="saveState",
@@ -372,85 +452,6 @@ def create_cutting_event(cutting_spec: list[dict]):
                                                    info={"id": at.isoformat()},
                                                    params=mgmt_capnp.Params.Cutting.new_message(cuttingSpec = cutting_spec))
 
-
-def run_grassmind_on_monica_state(old_state, day_index, grassmind_climate, paths):
-    if not old_state.modelState._has("currentCropModule"):
-        return old_state, None
-
-    new_state = old_state
-    if not hasattr(run_grassmind_on_monica_state, "initial_param_values"):
-        run_grassmind_on_monica_state.initial_param_values = {
-            "SpecificLeafArea": old_state.modelState.currentCropModule.cultivarParams.specificLeafArea,
-            "StageKcFactor": old_state.modelState.currentCropModule.cultivarParams.stageKcFactor,
-            "DroughtStressThreshold": old_state.modelState.currentCropModule.cultivarParams.droughtStressThreshold,
-            "CropSpecificMaxRootingDepth": old_state.modelState.currentCropModule.cultivarParams.cropSpecificMaxRootingDepth,
-        }
-
-    with open(paths["weather"], "wt") as f:
-        f.write(grassmind_climate[0])
-        for line in grassmind_climate[day_index:day_index + 365]:
-            f.write(line)
-            f.write("\n")
-
-    with open(paths["soil"], "wt") as f:
-        f.write(create_grassmind_soil_from_state(old_state))
-
-    p = sp.Popen([paths["formind"], paths["params"]], cwd=paths["cwd"], stdout=subprocess.DEVNULL)
-    p.wait()
-
-    # read .div file to get the current fractions
-    rel_species_abundance = None
-    with open(paths["div"]) as f:
-        lines = f.readlines()
-        rel_species_abundance = list(map(float, lines[4].split("\t")[2:6]))
-    with open(paths["bt"]) as f:
-        lines = f.readlines()
-        total_biomass_kg_per_ha = float(lines[4].split("\t")[1])*1000.0 # t -> kg ha-1
-
-    if rel_species_abundance:
-        params = calc_community_level_params(rel_species_abundance)
-        #print(old_state.modelState.currentStepDate, "community params:", params)
-        new_state = old_state.as_builder()
-        cps = new_state.modelState.currentCropModule.cultivarParams
-        cps.specificLeafArea = list(map(lambda v: v * params["SpecificLeafArea"], list(cps.specificLeafArea)))
-        cps.stageKcFactor = list(map(lambda v: v * params["StageKcFactor"], list(cps.stageKcFactor)))
-        cps.droughtStressThreshold = list(map(lambda v: v * params["DroughtStressThreshold"],
-                                              list(cps.droughtStressThreshold)))
-        cps.cropSpecificMaxRootingDepth = params["CropSpecificMaxRootingDepth"]
-    return new_state, total_biomass_kg_per_ha
-
-def create_grassmind_soil_from_state(state):
-    sc = state.modelState.soilColumn
-    sb = io.StringIO()
-    sb.write("Silt\t\Clay\tSand\n")
-    silt = 1 - sc.layers[0].sps.soilSandContent - sc.layers[0].sps.soilClayContent
-    sb.write(f"{silt}\t\{sc.layers[0].sps.soilClayContent}\t{sc.layers[0].sps.soilSandContent}\n")
-    sb.write("\n")
-    sb.write("Layer\tRWC[-]\tFC[V%]\tPWP[V%]\tMinN[gm-2]\tPOR[V%]\tKS[mm/d]\n")
-    for i, l in enumerate(sc.layers):
-        n_kg_per_m3 = l.soilNO3 + l.soilNO2 + l.soilNH4
-        n_kg_per_m2 = n_kg_per_m3 * 0.01 # m3 -> m2 (0.1m layer thickness)
-        n_g_per_m2 = n_kg_per_m2 * 1000.0 # kg -> g
-        ks = l.sps._get("lambda") * 1000.0 # m/d -> mm/d
-        sb.write(f"{i}\t{round(l.soilMoistureM3, 5)}\t{round(l.sps.fieldCapacity*100.0, 2)}\t{round(l.sps.permanentWiltingPoint*100.0,2)}\t{round(n_g_per_m2, 5)}\t{round(l.sps.saturation*100.0, 2)}\t{round(ks,2)}\n")
-    return sb.getvalue()
-
-def calc_community_level_params(s_i_s):
-    p_i_s = {
-        "SpecificLeafArea": {"S_PFTs": [0.36, 0.47, 0.03, 0.36], "min": 0.6, "max": 1.4, "values": [0.8, 0.75, 0.7, 0.6]},
-        "StageKcFactor": {"S_PFTs": [0.36, 0.16, 0.03, 0.4], "min": 0.6, "max": 1.4, "values": [1.3, 1.1, 0.91, 0.83]},
-        "DroughtStressThreshold": {"S_PFTs": [0.0, 0.16, 0.78, 0.58], "min": 0.2, "max": 1.0, "values": [0.35, 0.5, 0.75, 0.9]},
-        "CropSpecificMaxRootingDepth": {"S_PFTs": [0.36, 0.31, 0.03, 0.98], "min": 0.1, "max": 0.3, "values": [0.15, 0.2, 0.25, 0.3]},
-    }
-    res = {}
-    for param_name, ps in p_i_s.items():
-        sum_sip_x_si_x_pi = 0
-        sum_sip_x_si = 0
-        for i, s_i_p in enumerate(ps["S_PFTs"]):
-            sum_sip_x_si_x_pi += s_i_p * s_i_s[i] * ps["values"][i]
-            sum_sip_x_si += s_i_p * s_i_s[i]
-        res[param_name] = ps["min"] + (sum_sip_x_si_x_pi/sum_sip_x_si)*(ps["max"] - ps["min"])
-    return res
 
 if __name__ == '__main__':
     asyncio.run(capnp.run(main(standalone_config)))
