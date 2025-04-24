@@ -17,7 +17,6 @@ import asyncio
 from datetime import date
 import io
 import subprocess
-import threading
 import time
 from collections import defaultdict
 import capnp
@@ -29,6 +28,7 @@ import sys
 
 from zalfmas_common import common
 import zalfmas_capnp_schemas
+from zalfmas_services.crop import monica_crop_service
 from zalfmas_common.model import monica_io
 from zalfmas_fbp.run import channels as chans, ports as fbp_ports
 capnp_path = Path(os.path.dirname(zalfmas_capnp_schemas.__file__))
@@ -48,9 +48,7 @@ standalone_config_mbm_lin = {
     "col": "403",
     "path_to_channel": "/home/berg/GitHub/monica/_cmake_debug/common/channel",
     "path_to_daily_monica_fbp_component": "/home/berg/GitHub/monica/_cmake_debug/daily-monica-fbp-component",
-    #"path_to_monica_parameters_dir": "/home/berg/GitHub/IPP_grassland/data/params", #"/home/berg/GitHub/monica-parameters",
     "path_to_monica_parameters_dir": "/home/berg/GitHub/monica-parameters",
-    "grassmind_current_working_dir": "/home/berg/Desktop/valeh/GRASSMIND",
     "path_to_formind_exe": "/home/berg/GitHub/grassmind_zalf/_cmake_debug/formind",
     "path_to_full_weather_file": "/home/berg/Desktop/valeh/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
     "path_to_grassmind_weather_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp26/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
@@ -64,9 +62,7 @@ standalone_config_mbm_win = {
     "col": "403",
     "path_to_channel": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/channel.exe",
     "path_to_daily_monica_fbp_component": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
-    #"path_to_monica_parameters_dir": "/home/berg/GitHub/IPP_grassland/data/params", #"/home/berg/GitHub/monica-parameters",
-    "path_to_monica_parameters_dir": r"C:\Users\berg\GitHub\monica-parameters",
-    "grassmind_current_working_dir": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26",
+    "path_to_monica_parameters_dir": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
     "path_to_formind_exe": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind.exe",
     "path_to_full_weather_file": "C:/Users/berg/Desktop/valeh/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
     "path_to_grassmind_weather_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters\Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
@@ -160,14 +156,8 @@ async def main(config: dict):
             #"--verbose",
             port_infos_reader_sr
         ], env={"MONICA_PARAMETERS": config["path_to_monica_parameters_dir"],
-                "systemroot": os.getenv("systemroot")},
+                "systemroot": os.getenv("systemroot", "")},
         stdout=subprocess.DEVNULL))
-
-        # start crop service
-        procs.append(sp.Popen([
-            "poetry", "run", "python", "-m", "zalfmas_services.crop.monica_crop_service",
-            f"path_to_monica_parameters={config['path_to_monica_parameters_dir']}", "port=9997", "srt=crop"
-        ]))
 
         # write the config to the config channel
         await port_infos_writer.write(value=port_infos_msg)
@@ -190,15 +180,6 @@ async def main(config: dict):
                                                       structure={"json": None})
         await env_writer.write(value=fbp_capnp.IP.new_message(content=env))
         print("send env on env channel")
-
-        crop_planted = False
-        crop_service_sr = "capnp://localhost:9997/crop"
-        crop_service = await con_man.try_connect(crop_service_sr, cast_as=crop_capnp.Service)
-        cat_to_name_to_crop = defaultdict(dict)
-        for e in (await crop_service.entries()).entries:
-            cat_to_name_to_crop[e.categoryId][e.name] = e.ref
-        print("got all crop service entries")
-        #time.sleep(5)
 
         state_reader = await con_man.try_connect(port_srs["out"]["serialized_state"], cast_as=fbp_capnp.Channel.Reader)
         state_writer = await con_man.try_connect(port_srs["in"]["serialized_state"], cast_as=fbp_capnp.Channel.Writer)
@@ -243,8 +224,12 @@ async def main(config: dict):
             }
         }
 
+        # create monica crop
         abs_events = {
-            "2021-03-01": create_sowing_event(cat_to_name_to_crop["Grass_Species4"]["Grass_CLV4"].cast_as(crop_capnp.Crop)),
+            "2021-03-01": create_sowing_event(monica_crop_service.Crop(
+                {"id": "Grass_Species4", "name": "Grass Species 4"}, "../data/params/crops/species/Grass_Species4.json",
+                {"id": "Grass_CLV4", "name": "Grass CLV 4"}, "../data/params/crops/cultivars/Grass_CLV4.json",
+                "../data/params/crops/residues/grass-ley.json")),
         }
         rel_events = {
             "06-15": create_cutting_event([
@@ -486,4 +471,5 @@ def create_cutting_event(cutting_spec: list[dict]):
 
 
 if __name__ == '__main__':
+    #asyncio.run(capnp.run(main(standalone_config_mbm_lin)))
     asyncio.run(capnp.run(main(standalone_config_vk_win)))
