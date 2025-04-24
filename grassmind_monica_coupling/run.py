@@ -43,7 +43,7 @@ import monica_management_capnp as mgmt_capnp
 import monica_params_capnp
 import monica_state_capnp
 
-standalone_config = {
+standalone_config_mbm_lin = {
     "row": "220",
     "col": "403",
     "path_to_channel": "/home/berg/GitHub/monica/_cmake_debug/common/channel",
@@ -58,6 +58,38 @@ standalone_config = {
     "path_to_grassmind_param_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
     "path_to_result_div": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.div",
     "path_to_result_bt": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.bt"
+}
+standalone_config_mbm_win = {
+    "row": "220",
+    "col": "403",
+    "path_to_channel": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/channel.exe",
+    "path_to_daily_monica_fbp_component": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
+    #"path_to_monica_parameters_dir": "/home/berg/GitHub/IPP_grassland/data/params", #"/home/berg/GitHub/monica-parameters",
+    "path_to_monica_parameters_dir": r"C:\Users\berg\GitHub\monica-parameters",
+    "grassmind_current_working_dir": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26",
+    "path_to_formind_exe": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind.exe",
+    "path_to_full_weather_file": r"C:/Users/berg/Desktop/valeh/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
+    "path_to_grassmind_weather_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters\Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
+    "path_to_grassmind_soil_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
+    "path_to_grassmind_param_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
+    "path_to_result_div": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.div",
+    "path_to_result_bt": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.bt"
+}
+standalone_config_vk_win = {
+    "row": "220",
+    "col": "403",
+    "path_to_channel": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/channel.exe",
+    "path_to_daily_monica_fbp_component": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
+    #"path_to_monica_parameters_dir": "/home/berg/GitHub/IPP_grassland/data/params", #"/home/berg/GitHub/monica-parameters",
+    "path_to_monica_parameters_dir": r"C:\Users\berg\GitHub\monica-parameters",
+    "grassmind_current_working_dir": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26",
+    "path_to_formind_exe": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind.exe",
+    "path_to_full_weather_file": r"C:/Users/berg/Desktop/valeh/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
+    "path_to_grassmind_weather_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters\Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
+    "path_to_grassmind_soil_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
+    "path_to_grassmind_param_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
+    "path_to_result_div": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.div",
+    "path_to_result_bt": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.bt"
 }
 async def main(config: dict):
     common.update_config(config, sys.argv, print_config=True, allow_new_keys=False)
@@ -130,7 +162,8 @@ async def main(config: dict):
             config["path_to_daily_monica_fbp_component"],
             #"--verbose",
             port_infos_reader_sr
-        ], cwd=paths["cwd"], env={"MONICA_PARAMETERS": config["path_to_monica_parameters_dir"]},
+        ], env={"MONICA_PARAMETERS": config["path_to_monica_parameters_dir"],
+                "systemroot": os.getenv("systemroot")},
         stdout=subprocess.DEVNULL))
 
         # start crop service
@@ -454,4 +487,4 @@ def create_cutting_event(cutting_spec: list[dict]):
 
 
 if __name__ == '__main__':
-    asyncio.run(capnp.run(main(standalone_config)))
+    asyncio.run(capnp.run(main(standalone_config_mbm_win)))
