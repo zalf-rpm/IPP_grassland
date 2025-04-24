@@ -99,7 +99,6 @@ async def main(config: dict):
     row = int(config["row"])
     col = int(config["col"])
     paths = {
-        #"cwd": config["grassmind_current_working_dir"],
         "full_weather": config["path_to_full_weather_file"].format(row=row, col=col),
         "weather": config["path_to_grassmind_weather_file"].format(row=row, col=col),
         "soil": config["path_to_grassmind_soil_file"].format(row=row, col=col),
