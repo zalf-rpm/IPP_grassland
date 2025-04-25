@@ -314,7 +314,7 @@ async def main(config: dict):
                st = out_ip.content.as_struct(common_capnp.StructuredText)
                r = json.loads(st.value)
                mo_res = r["data"][0]["results"][0]
-               mo_biomass = mo_res["AbBiom"]
+               mo_biomass = mo_res["exportedCutBiomass"]
                #print(r)
             else:
                print("received done on output channel")
@@ -366,10 +366,8 @@ def run_grassmind_on_monica_state(old_state, day_index, grassmind_climate, paths
     with open(paths["soil"], "wt") as f:
         f.write(create_grassmind_soil_from_state(old_state))
 
-    p = sp.Popen([paths["formind"], paths["params"]], 
-                 #cwd=paths["cwd"], 
-                 stdout=subprocess.DEVNULL)
-    p.wait()
+    p = sp.Popen([paths["formind"], paths["params"]], stdout=subprocess.DEVNULL)
+    p.wait()     #grassmind run
 
     # read .div file to get the current fractions
     rel_species_abundance = None
@@ -387,16 +385,16 @@ def run_grassmind_on_monica_state(old_state, day_index, grassmind_climate, paths
         cps = new_state.modelState.currentCropModule.cultivarParams
         cps.specificLeafArea = list(map(lambda v: v * params["SpecificLeafArea"],
                                         run_grassmind_on_monica_state.initial_param_values["SpecificLeafArea"]))
-        print("new specificLeafArea:", cps.specificLeafArea)
+        #print("new specificLeafArea:", cps.specificLeafArea)
         cps.stageKcFactor = list(map(lambda v: v * params["StageKcFactor"],
                                      run_grassmind_on_monica_state.initial_param_values["StageKcFactor"]))
-        print("new stageKcFactor:", cps.stageKcFactor)
+        #print("new stageKcFactor:", cps.stageKcFactor)
         cps.droughtStressThreshold = list(map(lambda v: v * params["DroughtStressThreshold"],
                                               run_grassmind_on_monica_state.initial_param_values[
                                                   "DroughtStressThreshold"]))
-        print("new droughtStressThreshold:", cps.droughtStressThreshold)
+        #print("new droughtStressThreshold:", cps.droughtStressThreshold)
         cps.cropSpecificMaxRootingDepth = params["CropSpecificMaxRootingDepth"]
-        print("new cropSpecificMaxRootingDepth:", cps.cropSpecificMaxRootingDepth)
+        #print("new cropSpecificMaxRootingDepth:", cps.cropSpecificMaxRootingDepth)
     return new_state, total_biomass_kg_per_ha
 
 def create_grassmind_soil_from_state(state):
