@@ -361,7 +361,7 @@ def run_grassmind_on_monica_state(old_state, day_index, grassmind_climate, paths
         rel_species_abundance = list(map(float, lines[4].split("\t")[2:6]))
     with open(paths["bt"]) as f:
         lines = f.readlines()
-        total_biomass_kg_per_ha = float(lines[4].split("\t")[1])*100000.0 # t -> kg ha-1
+        total_biomass_kg_per_ha = float(lines[4].split("\t")[1])*100000000.0 # t -> kg ha-1
 
     if rel_species_abundance:
         params = calc_community_level_params(rel_species_abundance)
