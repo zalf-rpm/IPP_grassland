@@ -14,7 +14,7 @@ zalfmas-fbp = "^0.2.2"
 #zalfmas-fbp = {path = "../../../../mas_python_fbp", develop = true}
 pyzmq = "^26.2.1"
 pycapnp = "^2.0.0"
-zalfmas-services = "^0.1.5"
+zalfmas-services = "^0.1.6"
 
 [build-system]
 requires = ["poetry-core"]
