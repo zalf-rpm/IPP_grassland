@@ -73,7 +73,7 @@ standalone_config_mbm_win = {
 }
 standalone_config_vk_win = {
     "row": "220",
-    "col": "403",
+    "col": "454",
     "path_to_channel": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/channel.exe",
     "path_to_daily_monica_fbp_component": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
     "path_to_monica_parameters_dir": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
