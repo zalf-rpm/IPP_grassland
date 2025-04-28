@@ -72,8 +72,8 @@ standalone_config_mbm_win = {
     "path_to_result_bt": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.bt"
 }
 standalone_config_vk_win = {
-    "row": "230",
-    "col": "514",
+    "row": "220",
+    "col": "403",
     "path_to_channel": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/channel.exe",
     "path_to_daily_monica_fbp_component": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
     "path_to_monica_parameters_dir": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
