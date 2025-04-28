@@ -305,6 +305,9 @@ async def main(config: dict):
                print("received done on output channel")
 
             print(iso_date, "biomass gm:", grassmind_total_biomass_kg_per_ha, "mo:", mo_biomass)
+            # ⬇️ ADD THIS LINE TO SAVE TO A FILE
+            with open("output_biomass.csv", "a") as f:
+                f.write(f"{iso_date},{mo_biomass}\n")
 
         await event_writer.close()
         await env_writer.close()
