@@ -72,14 +72,14 @@ standalone_config_mbm_win = {
     "path_to_result_bt": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.bt"
 }
 standalone_config_vk_win = {
-    "row": "220",
-    "col": "403",
+    "row": "230",
+    "col": "514",
     "path_to_channel": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/channel.exe",
     "path_to_daily_monica_fbp_component": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
     "path_to_monica_parameters_dir": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
     "path_to_formind_exe": "E:/4Zalf_10102024_rcp26/formind.exe",
     "path_to_full_weather_file": "E:/4Zalf_10102024_rcp26/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
-    "path_to_grassmind_weather_file": "E:/4Zalf_10102024_rcp26/formind_parameters\Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
+    "path_to_grassmind_weather_file": "E:/4Zalf_10102024_rcp26/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
     "path_to_grassmind_soil_file": "E:/4Zalf_10102024_rcp26/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
     "path_to_grassmind_param_file": "E:/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
     "path_to_result_div": "E:/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.div",
