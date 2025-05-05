@@ -19,7 +19,7 @@
         {
             "worksteps": [
                 {
-                    "date": "2021-03-01",
+                    "date": "0000-03-01",
                     "type": "Sowing",
                     "crop": ["ref", "crops", "RYE"]
                 },
