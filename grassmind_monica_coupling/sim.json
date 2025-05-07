@@ -1,16 +1,21 @@
 {
 	"crop.json": "crop.json",
 	"site.json": "site.json",
-	"climate.csv": "",
+	"climate.csv": "../data/daily_mean_RES1_C402R220.csv",
 
-	"climate.csv-options": {},
+	"climate.csv-options": {
+		"no-of-climate-file-header-lines": 1,
+		"csv-separator": ",",
+		"start-date": "2021-01-01",
+		"end-date": "2040-12-31"
+	},
 
 	"debug?": false,
-	"path-to-output": "./",
+	"path-to-output": ".",
 	"include-file-base-path": "../data/params/",
 	
 	"output": { 
-	  "write-file?": false,
+	  "write-file?": true,
 		"file-name": "out.csv",
 		"csv-options": {
 			"include-header-row": true,
@@ -22,6 +27,7 @@
 
 		"events": [
 			"daily", [
+				"Date",
 				"Crop",
 				"Year",
 				"exportedCutBiomass",

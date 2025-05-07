@@ -45,7 +45,7 @@ import monica_state_capnp
 
 standalone_config_mbm_lin = {
     "row": "220",
-    "col": "403",
+    "col": "454", #"403",
     "path_to_channel": "/home/berg/GitHub/monica/_cmake_debug/common/channel",
     "path_to_daily_monica_fbp_component": "/home/berg/GitHub/monica/_cmake_debug/daily-monica-fbp-component",
     "path_to_monica_parameters_dir": "/home/berg/GitHub/monica-parameters",
@@ -111,17 +111,17 @@ async def main(config: dict):
 
         # create the three channels for the three ports
         channels.append(chans.start_channel(config["path_to_channel"],
-                                            "env_in|" + first_writer_sr, name="env"))
+                                            "env_in", first_writer_sr, name="env"))
         channels.append(chans.start_channel(config["path_to_channel"],
-                                            "events_in|" + first_writer_sr, name="events"))
+                                            "events_in", first_writer_sr, name="events"))
         channels.append(chans.start_channel(config["path_to_channel"],
-                                            "result_out|" + first_writer_sr, name="result"))
+                                            "result_out", first_writer_sr, name="result"))
         channels.append(chans.start_channel(config["path_to_channel"],
-                                            "serialized_state_in|" + first_writer_sr, name="serialized_state"))
+                                            "serialized_state_in", first_writer_sr, name="serialized_state"))
         channels.append(chans.start_channel(config["path_to_channel"],
-                                            "serialized_state_out|" + first_writer_sr, name="serialized_state"))
+                                            "serialized_state_out", first_writer_sr, name="serialized_state"))
         channels.append(chans.start_channel(config["path_to_channel"],
-                                            "port_infos|" + first_writer_sr, name="port_infos",
+                                            "port_infos", first_writer_sr, name="port_infos",
                                             port=9991,
                                             reader_srts="r_in"))
 
@@ -232,6 +232,10 @@ async def main(config: dict):
                 "../data/params/crops/residues/grass-ley.json")),
         }
         rel_events = {
+            #"03-01": create_sowing_event(monica_crop_service.Crop(
+            #    {"id": "Grass_Species4", "name": "Grass Species 4"}, "../data/params/crops/species/Grass_Species4.json",
+            #    {"id": "Grass_CLV4", "name": "Grass CLV 4"}, "../data/params/crops/cultivars/Grass_CLV4.json",
+            #    "../data/params/crops/residues/grass-ley.json")),
             "06-15": create_cutting_event([
                 {"organ": "leaf", "value": 0.15, "unit": "lai", "cutOrLeft": "left", "exportPercentage": 100.0},
                 {"organ": "shoot", "value": 100, "unit": "biomass", "cutOrLeft": "left", "exportPercentage": 100.0}]),
@@ -300,6 +304,7 @@ async def main(config: dict):
                r = json.loads(st.value)
                mo_res = r["data"][0]["results"][0]
                mo_biomass = mo_res["AbBiom"]
+               mois = mo_res["Mois"]
                #print(r)
             else:
                print("received done on output channel")
@@ -307,7 +312,7 @@ async def main(config: dict):
             print(iso_date, "biomass gm:", grassmind_total_biomass_kg_per_ha, "mo:", mo_biomass)
             # ⬇️ ADD THIS LINE TO SAVE TO A FILE
             with open("output_biomass.csv", "a") as f:
-                f.write(f"{iso_date},{mo_biomass}\n")
+                f.write(f"{iso_date},{mo_biomass},{mois}\n")
 
         await event_writer.close()
         await env_writer.close()

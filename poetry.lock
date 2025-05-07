@@ -2,14 +2,14 @@
 
 [[package]]
 name = "certifi"
-version = "2025.1.31"
+version = "2025.4.26"
 description = "Python package for providing Mozilla's CA Bundle."
 optional = false
 python-versions = ">=3.6"
 groups = ["main"]
 files = [
-    {file = "certifi-2025.1.31-py3-none-any.whl", hash = "sha256:ca78db4565a652026a4db2bcdf68f2fb589ea80d0be70e03929ed730746b84fe"},
-    {file = "certifi-2025.1.31.tar.gz", hash = "sha256:3d5da6925056f6f18f119200434a4780a94263f10d1c21d032a6f6b2baa20651"},
+    {file = "certifi-2025.4.26-py3-none-any.whl", hash = "sha256:30350364dfe371162649852c63336a15c70c6510c2ad5015b21c2345311805f3"},
+    {file = "certifi-2025.4.26.tar.gz", hash = "sha256:0a816057ea3cdefcef70270d2c515e4506bbc954f417fa5ade2021213bb8f0c6"},
 ]
 
 [[package]]
@@ -744,14 +744,14 @@ files = [
 
 [[package]]
 name = "zalfmas-common"
-version = "0.1.9"
+version = "0.1.10"
 description = "Common code for ZALF MAS projects"
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "zalfmas_common-0.1.9-py3-none-any.whl", hash = "sha256:94edfe9f0a15e11842102f312965ed7ff2e85bd087d3caf672755d9b88630eb4"},
-    {file = "zalfmas_common-0.1.9.tar.gz", hash = "sha256:48eb8f514661cfd11dc04f92f1d2862974f2c15d9f30cf2eb3b137704b169702"},
+    {file = "zalfmas_common-0.1.10-py3-none-any.whl", hash = "sha256:000a69437428598482593d2883ec4efb872fd66a7887bab6f6f75012cffba134"},
+    {file = "zalfmas_common-0.1.10.tar.gz", hash = "sha256:45f85ee3cc4b7d54319c828702474efab50c58a8aa1fd82ff6aa84e66db769ac"},
 ]
 
 [package.dependencies]
@@ -766,20 +766,20 @@ zalfmas-capnp-schemas = ">=0.1.11,<0.2.0"
 
 [[package]]
 name = "zalfmas-fbp"
-version = "0.2.2"
+version = "0.2.3"
 description = ""
 optional = false
 python-versions = "<4.0,>=3.10"
 groups = ["main"]
 files = [
-    {file = "zalfmas_fbp-0.2.2-py3-none-any.whl", hash = "sha256:943b7d029214b6faab1de04c80b0ec51ad8afb01dc41c728f5b0d64539c2b142"},
-    {file = "zalfmas_fbp-0.2.2.tar.gz", hash = "sha256:fbcece4b6c87b3fcc3f9bff3a1f55c2d4b52b2a356caf0179485dee5ae63a14b"},
+    {file = "zalfmas_fbp-0.2.3-py3-none-any.whl", hash = "sha256:7a0f574471276bfd91c4c80a45c3fbd42d4accd2e757940df8552cec89d91e7b"},
+    {file = "zalfmas_fbp-0.2.3.tar.gz", hash = "sha256:516e8631bbd24da98f1e663eafad9d4efddf1c28d5c64c9a9c5a465a66d4f78e"},
 ]
 
 [package.dependencies]
 tomli = ">=2.2.1,<3.0.0"
-zalfmas-capnp-schemas = ">=0.1.12,<0.2.0"
-zalfmas-common = ">=0.1.7,<0.2.0"
+zalfmas-capnp-schemas = ">=0.1.13,<0.2.0"
+zalfmas-common = ">=0.1.10,<0.2.0"
 
 [[package]]
 name = "zalfmas-services"
@@ -805,4 +805,4 @@ zalfmas-common = ">=0.1.9,<0.2.0"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "195a6f03fa13f8d733998d29277e7bd64325c4256aaba6e771fddd5504dac351"
+content-hash = "8bc01bd482ef6287906f25b504b54cf640d3823e841a0f9a8d1f322dc2cccd51"
