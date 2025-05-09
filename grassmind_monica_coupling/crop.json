@@ -15,11 +15,11 @@
 		"U": ["include-from-file", "mineral-fertilisers/U.json"],
 		"CAM": ["include-from-file", "organic-fertilisers/CAM.json"]
 	}, 
-    "cropRotation_": [
+    "cropRotation": [
         {
             "worksteps": [
                 {
-                    "date": "2021-03-01",
+                    "date": "0000-03-01",
                     "type": "Sowing",
                     "crop": ["ref", "crops", "RYE"]
                 },
@@ -137,7 +137,7 @@
             ]
         }
     ],
-    "cropRotations": [
+    "_cropRotations": [
         {
             "start": "2021-01-01",
             "end": "2021-03-02",
@@ -176,7 +176,7 @@
                             },
                             "export": {
                                 "Leaf": [
-                                    100,
+                                    50,
                                     "%"
                                 ],
                                 "Shoot": [
@@ -213,7 +213,7 @@
                             },
                             "export": {
                                 "Leaf": [
-                                    100,
+                                    50,
                                     "%"
                                 ],
                                 "Shoot": [
@@ -250,7 +250,7 @@
                             },
                             "export": {
                                 "Leaf": [
-                                    100,
+                                    50,
                                     "%"
                                 ],
                                 "Shoot": [

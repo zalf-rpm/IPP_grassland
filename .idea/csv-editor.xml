@@ -24,7 +24,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/grassmind_monica_coupling/output_biomass.csv">
+        <entry key="/grassmind_monica_coupling/out_section_daily_50.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
