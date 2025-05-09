@@ -10,6 +10,27 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/data/daily_mean_RES1_C402R220.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/grassmind_monica_coupling/out_section_daily.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="/grassmind_monica_coupling/out_section_daily_50.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/sim_setups_VK.csv">
           <value>
             <Attribute>

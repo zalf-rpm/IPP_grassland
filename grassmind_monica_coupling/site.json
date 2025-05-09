@@ -4,6 +4,7 @@
     "Slope": 0,
     "HeightNN": [0 , "m"],
     "NDeposition": 30,
+    "pwpFcSatFunction": "Wessolek2009",
 		
     "SoilProfileParameters": [
       {

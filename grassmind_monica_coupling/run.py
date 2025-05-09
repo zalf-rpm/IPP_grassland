@@ -45,7 +45,7 @@ import monica_state_capnp
 
 standalone_config_mbm_lin = {
     "row": "220",
-    "col": "403",
+    "col": "454", #"403",
     "path_to_channel": "/home/berg/GitHub/monica/_cmake_debug/common/channel",
     "path_to_daily_monica_fbp_component": "/home/berg/GitHub/monica/_cmake_debug/daily-monica-fbp-component",
     "path_to_monica_parameters_dir": "/home/berg/GitHub/monica-parameters",
@@ -111,17 +111,17 @@ async def main(config: dict):
 
         # create the three channels for the three ports
         channels.append(chans.start_channel(config["path_to_channel"],
-                                            "env_in|" + first_writer_sr, name="env"))
+                                            "env_in", first_writer_sr, name="env"))
         channels.append(chans.start_channel(config["path_to_channel"],
-                                            "events_in|" + first_writer_sr, name="events"))
+                                            "events_in", first_writer_sr, name="events"))
         channels.append(chans.start_channel(config["path_to_channel"],
-                                            "result_out|" + first_writer_sr, name="result"))
+                                            "result_out", first_writer_sr, name="result"))
         channels.append(chans.start_channel(config["path_to_channel"],
-                                            "serialized_state_in|" + first_writer_sr, name="serialized_state"))
+                                            "serialized_state_in", first_writer_sr, name="serialized_state"))
         channels.append(chans.start_channel(config["path_to_channel"],
-                                            "serialized_state_out|" + first_writer_sr, name="serialized_state"))
+                                            "serialized_state_out", first_writer_sr, name="serialized_state"))
         channels.append(chans.start_channel(config["path_to_channel"],
-                                            "port_infos|" + first_writer_sr, name="port_infos",
+                                            "port_infos", first_writer_sr, name="port_infos",
                                             port=9991,
                                             reader_srts="r_in"))
 

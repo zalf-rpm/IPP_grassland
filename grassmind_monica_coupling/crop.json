@@ -19,7 +19,7 @@
         {
             "worksteps": [
                 {
-                    "date": "2021-03-01",
+                    "date": "0000-03-01",
                     "type": "Sowing",
                     "crop": ["ref", "crops", "RYE"]
                 },
@@ -134,6 +134,144 @@
 					"depth": [0.3, "m"],
 					"partition": ["include-from-file", "mineral-fertilisers/AN.json"]
 				}
+            ]
+        }
+    ],
+    "_cropRotations": [
+        {
+            "start": "2021-01-01",
+            "end": "2021-03-02",
+            "cropRotation":[
+                {
+                    "worksteps": [
+                        {
+                            "date": "2021-03-01",
+                            "type": "Sowing",
+                            "crop": ["ref", "crops", "RYE"]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "start": "2021-03-03",
+            "end": "2040-12-31",
+            "cropRotation": [
+                {
+                    "worksteps": [
+                        {
+                            "date": "0000-06-15",
+                            "type": "Cutting",
+                            "organs": {
+                                "Leaf": [
+                                    0.15,
+                                    "m2 m-2",
+                                    "left"
+                                ],
+                                "Shoot": [
+                                    100,
+                                    "kg ha-1",
+                                    "left"
+                                ]
+                            },
+                            "export": {
+                                "Leaf": [
+                                    50,
+                                    "%"
+                                ],
+                                "Shoot": [
+                                    100,
+                                    "%"
+                                ],
+                                "Fruit": [
+                                    0,
+                                    "%"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "NDemandFertilization",
+                            "date": "0000-06-20",
+                            "N-demand": [20.0, "kg"],
+                            "depth": [0.3, "m"],
+                            "partition": ["include-from-file", "mineral-fertilisers/AN.json"]
+                        },
+                        {
+                            "date": "0000-08-15",
+                            "type": "Cutting",
+                            "organs": {
+                                "Leaf": [
+                                    0.4,
+                                    "m2 m-2",
+                                    "left"
+                                ],
+                                "Shoot": [
+                                    100,
+                                    "kg ha-1",
+                                    "left"
+                                ]
+                            },
+                            "export": {
+                                "Leaf": [
+                                    50,
+                                    "%"
+                                ],
+                                "Shoot": [
+                                    100,
+                                    "%"
+                                ],
+                                "Fruit": [
+                                    0,
+                                    "%"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "NDemandFertilization",
+                            "date": "0000-08-20",
+                            "N-demand": [20.0, "kg"],
+                            "depth": [0.3, "m"],
+                            "partition": ["include-from-file", "mineral-fertilisers/AN.json"]
+                        },
+                        {
+                            "date": "0000-10-15",
+                            "type": "Cutting",
+                            "organs": {
+                                "Leaf": [
+                                    0.4,
+                                    "m2 m-2",
+                                    "left"
+                                ],
+                                "Shoot": [
+                                    100,
+                                    "kg ha-1",
+                                    "left"
+                                ]
+                            },
+                            "export": {
+                                "Leaf": [
+                                    50,
+                                    "%"
+                                ],
+                                "Shoot": [
+                                    100,
+                                    "%"
+                                ],
+                                "Fruit": [
+                                    0,
+                                    "%"
+                                ]
+                            }
+                        },
+                        {
+                            "type": "NDemandFertilization",
+                            "date": "0000-10-20",
+                            "N-demand": [20.0, "kg"],
+                            "depth": [0.3, "m"],
+                            "partition": ["include-from-file", "mineral-fertilisers/AN.json"]
+                        }
+                    ]
+                }
             ]
         }
     ],
