@@ -299,7 +299,7 @@ async def main(config: dict):
                st = out_ip.content.as_struct(common_capnp.StructuredText)
                r = json.loads(st.value)
                mo_res = r["data"][0]["results"][0]
-               mo_biomass = mo_res["Abbiom"]
+               mo_biomass = mo_res["AbBiom"]
                #print(r)
             else:
                print("received done on output channel")
