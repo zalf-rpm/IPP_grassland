@@ -49,6 +49,8 @@ standalone_config_mbm_lin = {
     "row": "220",
     "col": "454", #"403",
     "rcp": "26",
+    "start_year": "2021",
+    "end_year": "2098",
     "path_to_channel": "/home/berg/GitHub/monica/_cmake_debug/common/channel",
     "path_to_daily_monica_fbp_component": "/home/berg/GitHub/monica/_cmake_debug/daily-monica-fbp-component",
     "path_to_monica_parameters_dir": "/home/berg/GitHub/monica-parameters",
@@ -65,6 +67,8 @@ standalone_config_rpm_hpc = {
     "row": "220",
     "col": "454", #"403",
     "rcp": "26",
+    "start_year": "2021",
+    "end_year": "2098",
     "path_to_channel": "/home/rpm/start_manual_test_services/GitHub/monica/_cmake_release/common/channel",
     "path_to_daily_monica_fbp_component": "/home/rpm/start_manual_test_services/GitHub/monica/_cmake_release/daily-monica-fbp-component",
     "path_to_monica_parameters_dir": "/home/rpm/start_manual_test_services/GitHub/monica-parameters",
@@ -81,6 +85,8 @@ standalone_config_mbm_win = {
     "row": "220",
     "col": "403",
     "rcp": "26",
+    "start_year": "2021",
+    "end_year": "2098",
     "path_to_channel": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/channel.exe",
     "path_to_daily_monica_fbp_component": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
     "path_to_monica_parameters_dir": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
@@ -97,6 +103,8 @@ standalone_config_vk_win = {
     "row": "220",
     "col": "403",
     "rcp": "26",
+    "start_year": "2021",
+    "end_year": "2098",
     "path_to_channel": "C:/Users/khaledi/development/monica_win64_3.6.37/bin/channel.exe",
     "path_to_daily_monica_fbp_component": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
     "path_to_monica_parameters_dir": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
@@ -236,6 +244,8 @@ async def main(config: dict):
         event_writer = await con_man.try_connect(port_srs["in"]["events"], cast_as=fbp_capnp.Channel.Writer)
         output_reader = await con_man.try_connect(port_srs["out"]["result"], cast_as=fbp_capnp.Channel.Reader)
 
+        start_year = int(config["start_year"])
+        end_year = int(config["end_year"])
         iso_dates = []
         grassmind_climate = ["rain[mm]\tTemperature[degC]\tRadiation[mmolm-2s-1]\tDaylength[h]\tPET[mm]\tCO2[ppm]\n"]
         monica_climate = []
@@ -249,7 +259,9 @@ async def main(config: dict):
                 #iso_date = data[h2i["iso-date"]]
                 iso_date = data[h2i["date"]]
 
-                if int(iso_date[:4]) < 2021:
+                if int(iso_date[:4]) < start_year:
+                    continue
+                if int(iso_date[:4]) > end_year:
                     continue
 
                 iso_dates.append(iso_date)
@@ -358,7 +370,7 @@ async def main(config: dict):
             else:
                print("received done on output channel")
 
-            print(iso_date, "biomass gm:", grassmind_total_biomass_kg_per_ha, "mo:", mo_biomass)
+            #print(iso_date, "biomass gm:", grassmind_total_biomass_kg_per_ha, "mo:", mo_biomass)
             # ⬇️ ADD THIS LINE TO SAVE TO A FILE
             with open("output_biomass.csv", "a") as f:
                 f.write(f"{iso_date},{mo_biomass}\n")
@@ -422,7 +434,7 @@ def run_grassmind_on_monica_state(old_state, day_index, grassmind_climate, paths
 
     if rel_species_abundance:
         params = calc_community_level_params(rel_species_abundance)
-        print(old_state.modelState.currentStepDate, "community params:", params)
+        #print(old_state.modelState.currentStepDate, "community params:", params)
         new_state = old_state.as_builder()
         cps = new_state.modelState.currentCropModule.cultivarParams
         cps.specificLeafArea = list(map(lambda v: v * params["SpecificLeafArea"],
