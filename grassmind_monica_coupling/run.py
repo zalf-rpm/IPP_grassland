@@ -47,62 +47,66 @@ import monica_state_capnp
 standalone_config_mbm_lin = {
     "row": "220",
     "col": "454", #"403",
+    "rcp": "26",
     "path_to_channel": "/home/berg/GitHub/monica/_cmake_debug/common/channel",
     "path_to_daily_monica_fbp_component": "/home/berg/GitHub/monica/_cmake_debug/daily-monica-fbp-component",
     "path_to_monica_parameters_dir": "/home/berg/GitHub/monica-parameters",
     "path_to_formind_exe": "/home/berg/GitHub/grassmind_zalf/_cmake_debug/formind",
     "full_weather_path_pattern": "{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
     "path_to_full_weather_dir": "/home/berg/Desktop/valeh/weatherData",
-    "path_to_grassmind_weather_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp26/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
-    "path_to_grassmind_soil_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp26/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
-    "path_to_grassmind_param_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
-    "path_to_result_div": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.div",
-    "path_to_result_bt": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.bt"
+    "path_to_grassmind_weather_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
+    "path_to_grassmind_soil_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
+    "path_to_grassmind_param_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
+    "path_to_result_div": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.div",
+    "path_to_result_bt": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.bt"
 }
 standalone_config_rpm_hpc = {
     "row": "220",
     "col": "454", #"403",
+    "rcp": "26",
     "path_to_channel": "/home/rpm/start_manual_test_services/GitHub/monica/_cmake_release/common/channel",
     "path_to_daily_monica_fbp_component": "/home/rpm/start_manual_test_services/GitHub/monica/_cmake_release/daily-monica-fbp-component",
     "path_to_monica_parameters_dir": "/home/rpm/start_manual_test_services/GitHub/monica-parameters",
     "path_to_formind_exe": "/home/rpm/start_manual_test_services/GitHub/grassmind_zalf/src/formind",
     "full_weather_path_pattern": "{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
     "path_to_full_weather_dir": "/home/rpm/start_manual_test_services/grassmind_valeh/weatherData",
-    "path_to_grassmind_weather_file": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp26/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
-    "path_to_grassmind_soil_file": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp26/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
-    "path_to_grassmind_param_file": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
-    "path_to_result_div": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.div",
-    "path_to_result_bt": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.bt"
+    "path_to_grassmind_weather_file": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
+    "path_to_grassmind_soil_file": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
+    "path_to_grassmind_param_file": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
+    "path_to_result_div": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.div",
+    "path_to_result_bt": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.bt"
 }
 standalone_config_mbm_win = {
     "row": "220",
     "col": "403",
+    "rcp": "26",
     "path_to_channel": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/channel.exe",
     "path_to_daily_monica_fbp_component": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
     "path_to_monica_parameters_dir": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
-    "path_to_formind_exe": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind.exe",
+    "path_to_formind_exe": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/formind.exe",
     "full_weather_path_pattern": "{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
     "path_to_full_weather_dir": "C:/Users/berg/Desktop/valeh/weatherData",
-    "path_to_grassmind_weather_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters\Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
-    "path_to_grassmind_soil_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
-    "path_to_grassmind_param_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
-    "path_to_result_div": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.div",
-    "path_to_result_bt": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.bt"
+    "path_to_grassmind_weather_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/formind_parameters\Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
+    "path_to_grassmind_soil_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
+    "path_to_grassmind_param_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
+    "path_to_result_div": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.div",
+    "path_to_result_bt": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.bt"
 }
 standalone_config_vk_win = {
     "row": "220",
     "col": "403",
+    "rcp": "26",
     "path_to_channel": "C:/Users/khaledi/development/monica_win64_3.6.37/bin/channel.exe",
     "path_to_daily_monica_fbp_component": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
     "path_to_monica_parameters_dir": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
-    "path_to_formind_exe": "E:/4Zalf_10102024_rcp26/formind.exe",
+    "path_to_formind_exe": "E:/4Zalf_10102024_rcp{rcp}/formind.exe",
     "full_weather_path_pattern": "{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
     "path_to_full_weather_dir": "E:/4Zalf_10102024_rcp26/weatherData",
-    "path_to_grassmind_weather_file": "E:/4Zalf_10102024_rcp26/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
-    "path_to_grassmind_soil_file": "E:/4Zalf_10102024_rcp26/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
-    "path_to_grassmind_param_file": "E:/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
-    "path_to_result_div": "E:/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.div",
-    "path_to_result_bt": "E:/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.bt"
+    "path_to_grassmind_weather_file": "E:/4Zalf_10102024_rcp{rcp}/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
+    "path_to_grassmind_soil_file": "E:/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
+    "path_to_grassmind_param_file": "E:/4Zalf_10102024_rcp{rcp}/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
+    "path_to_result_div": "E:/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.div",
+    "path_to_result_bt": "E:/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.bt"
 }
 async def main(config: dict):
     common.update_config(config, sys.argv, print_config=True, allow_new_keys=False)
@@ -129,13 +133,13 @@ async def main(config: dict):
         col = int(config["col"])
 
     paths = {
-        "full_weather": os.path.join(config["path_to_full_weather_dir"], config["full_weather_path_pattern"].format(row=row, col=col)),
-        "weather": config["path_to_grassmind_weather_file"].format(row=row, col=col),
-        "soil": config["path_to_grassmind_soil_file"].format(row=row, col=col),
-        "params": config["path_to_grassmind_param_file"].format(row=row, col=col),
-        "formind": config["path_to_formind_exe"].format(row=row, col=col),
-        "div": config["path_to_result_div"].format(row=row, col=col),
-        "bt": config["path_to_result_bt"].format(row=row, col=col),
+        "full_weather": os.path.join(config["path_to_full_weather_dir"], config["full_weather_path_pattern"].format(row=row, col=col, rcp=config["rcp"])),
+        "weather": config["path_to_grassmind_weather_file"].format(row=row, col=col, rcp=config["rcp"]),
+        "soil": config["path_to_grassmind_soil_file"].format(row=row, col=col, rcp=config["rcp"]),
+        "params": config["path_to_grassmind_param_file"].format(row=row, col=col, rcp=config["rcp"]),
+        "formind": config["path_to_formind_exe"].format(row=row, col=col, rcp=config["rcp"]),
+        "div": config["path_to_result_div"].format(row=row, col=col, rcp=config["rcp"]),
+        "bt": config["path_to_result_bt"].format(row=row, col=col, rcp=config["rcp"]),
     }
 
     try:
