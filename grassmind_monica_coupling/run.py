@@ -92,7 +92,7 @@ standalone_config_mbm_win = {
 standalone_config_vk_win = {
     "row": "220",
     "col": "403",
-    "path_to_channel": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/channel.exe",
+    "path_to_channel": "C:/Users/khaledi/development/monica_win64_3.6.37/bin/channel.exe",
     "path_to_daily_monica_fbp_component": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
     "path_to_monica_parameters_dir": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
     "path_to_formind_exe": "E:/4Zalf_10102024_rcp26/formind.exe",
@@ -263,16 +263,16 @@ async def main(config: dict):
 
         # create monica crop
         abs_events = {
-            "2021-03-01": create_sowing_event(monica_crop_service.Crop(
-                {"id": "Grass_Species4", "name": "Grass Species 4"}, "../data/params/crops/species/Grass_Species4.json",
-                {"id": "Grass_CLV4", "name": "Grass CLV 4"}, "../data/params/crops/cultivars/Grass_CLV4.json",
-                "../data/params/crops/residues/grass-ley.json")),
-        }
-        rel_events = {
-            #"03-01": create_sowing_event(monica_crop_service.Crop(
+            #"2021-03-01": create_sowing_event(monica_crop_service.Crop(
             #    {"id": "Grass_Species4", "name": "Grass Species 4"}, "../data/params/crops/species/Grass_Species4.json",
             #    {"id": "Grass_CLV4", "name": "Grass CLV 4"}, "../data/params/crops/cultivars/Grass_CLV4.json",
             #    "../data/params/crops/residues/grass-ley.json")),
+        }
+        rel_events = {
+            "03-01": create_sowing_event(monica_crop_service.Crop(
+                {"id": "Grass_Species4", "name": "Grass Species 4"}, "../data/params/crops/species/Grass_Species4.json",
+                {"id": "Grass_CLV4", "name": "Grass CLV 4"}, "../data/params/crops/cultivars/Grass_CLV4.json",
+                "../data/params/crops/residues/grass-ley.json")),
             "06-15": create_cutting_event([
                 {"organ": "leaf", "value": 0.15, "unit": "lai", "cutOrLeft": "left", "exportPercentage": 100.0},
                 {"organ": "shoot", "value": 100, "unit": "biomass", "cutOrLeft": "left", "exportPercentage": 100.0}]),
