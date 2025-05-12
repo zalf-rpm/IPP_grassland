@@ -7,7 +7,7 @@
 		"no-of-climate-file-header-lines": 1,
 		"csv-separator": ",",
 		"start-date": "2021-01-01",
-		"end-date": "2040-12-31"
+		"end-date": "2042-12-31"
 	},
 
 	"debug?": false,
@@ -28,12 +28,19 @@
 		"events": [
 			"daily", [
 				"Date",
-				"Crop",
-				"Year",
-				"exportedCutBiomass",
+				"Stage",
+				"Height",
+				["OrgBiom|RootBiom", "Root"],
+				["OrgBiom|LeafBiom", "Leaf"],
+				["OrgBiom|ShootBiom", "Shoot"],
+				["OrgBiom|FruitBiom", "Fruit"],
 				"AbBiom",
-				["SOC", [1, 4, "SUM"]],
-				["Mois", [1, 5, "SUM"]],
+				["AOMf|avg_AOMf_1-4", [1, 4, "AVG"]],
+				["AOMs|avg_AOMs_1-4", [1, 4, "AVG"]],
+				"TraDef",
+				"NDef",
+				["SOC|sum_SOC_1-4", [1, 4, "SUM"]],
+				["Mois|sum_SM_1-5", [1, 5, "SUM"]],
 				"N2O",
 				"NLeach",
 				"ET0",

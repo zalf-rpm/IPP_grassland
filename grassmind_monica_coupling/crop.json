@@ -19,9 +19,25 @@
         {
             "worksteps": [
                 {
-                    "date": "0000-03-01",
+                    "date": "2021-03-01",
                     "type": "Sowing",
                     "crop": ["ref", "crops", "RYE"]
+                }
+            ]
+        },
+        {
+            "worksteps": [
+                {
+                    "date": "0000-03-01",
+                    "type": "Sowing_",
+                    "crop": ["ref", "crops", "RYE"]
+                },
+                {
+                    "date": "0000-03-02",
+                    "type": "SaveMonicaState",
+                    "runAtStartOfDay": true,
+                    "path": "/home/berg/GitHub/IPP_grassland/grassmind_monica_coupling/state.json",
+                    "toJson": true
                 },
                 {
                     "date": "0000-06-15",
@@ -140,7 +156,7 @@
     "_cropRotations": [
         {
             "start": "2021-01-01",
-            "end": "2021-03-02",
+            "end": "2021-03-01",
             "cropRotation":[
                 {
                     "worksteps": [
@@ -154,11 +170,18 @@
             ]
         },
         {
-            "start": "2021-03-03",
-            "end": "2040-12-31",
+            "start": "2021-03-02",
+            "end": "2042-12-31",
             "cropRotation": [
                 {
                     "worksteps": [
+                        {
+                            "date": "0000-03-02",
+                            "type": "SaveMonicaState_",
+                            "runAtStartOfDay": true,
+                            "path": "/home/berg/GitHub/IPP_grassland/grassmind_monica_coupling/state.json",
+                            "toJson": true
+                        },
                         {
                             "date": "0000-06-15",
                             "type": "Cutting",
@@ -176,7 +199,7 @@
                             },
                             "export": {
                                 "Leaf": [
-                                    50,
+                                    100,
                                     "%"
                                 ],
                                 "Shoot": [
@@ -213,7 +236,7 @@
                             },
                             "export": {
                                 "Leaf": [
-                                    50,
+                                    100,
                                     "%"
                                 ],
                                 "Shoot": [
@@ -250,7 +273,7 @@
                             },
                             "export": {
                                 "Leaf": [
-                                    50,
+                                    100,
                                     "%"
                                 ],
                                 "Shoot": [

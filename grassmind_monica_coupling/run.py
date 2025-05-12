@@ -16,6 +16,7 @@
 import asyncio
 from datetime import date
 import io
+import re
 import subprocess
 import time
 from collections import defaultdict
@@ -50,12 +51,28 @@ standalone_config_mbm_lin = {
     "path_to_daily_monica_fbp_component": "/home/berg/GitHub/monica/_cmake_debug/daily-monica-fbp-component",
     "path_to_monica_parameters_dir": "/home/berg/GitHub/monica-parameters",
     "path_to_formind_exe": "/home/berg/GitHub/grassmind_zalf/_cmake_debug/formind",
-    "path_to_full_weather_file": "/home/berg/Desktop/valeh/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
+    "full_weather_path_pattern": "{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
+    "path_to_full_weather_dir": "/home/berg/Desktop/valeh/weatherData",
     "path_to_grassmind_weather_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp26/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
     "path_to_grassmind_soil_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp26/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
     "path_to_grassmind_param_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
     "path_to_result_div": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.div",
     "path_to_result_bt": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.bt"
+}
+standalone_config_rpm_hpc = {
+    "row": "220",
+    "col": "454", #"403",
+    "path_to_channel": "/home/rpm/start_manual_test_services/GitHub/monica/_cmake_release/common/channel",
+    "path_to_daily_monica_fbp_component": "/home/rpm/start_manual_test_services/GitHub/monica/_cmake_release/daily-monica-fbp-component",
+    "path_to_monica_parameters_dir": "/home/rpm/start_manual_test_services/GitHub/monica-parameters",
+    "path_to_formind_exe": "/home/rpm/start_manual_test_services/GitHub/grassmind_zalf/src/formind",
+    "full_weather_path_pattern": "{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
+    "path_to_full_weather_dir": "/home/rpm/start_manual_test_services/grassmind_valeh/weatherData",
+    "path_to_grassmind_weather_file": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp26/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
+    "path_to_grassmind_soil_file": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp26/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
+    "path_to_grassmind_param_file": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
+    "path_to_result_div": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.div",
+    "path_to_result_bt": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp26/results/parameter_R{row:03}C{col:03}I41.bt"
 }
 standalone_config_mbm_win = {
     "row": "220",
@@ -64,7 +81,8 @@ standalone_config_mbm_win = {
     "path_to_daily_monica_fbp_component": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
     "path_to_monica_parameters_dir": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
     "path_to_formind_exe": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind.exe",
-    "path_to_full_weather_file": "C:/Users/berg/Desktop/valeh/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
+    "full_weather_path_pattern": "{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
+    "path_to_full_weather_dir": "C:/Users/berg/Desktop/valeh/weatherData",
     "path_to_grassmind_weather_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters\Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
     "path_to_grassmind_soil_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
     "path_to_grassmind_param_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
@@ -78,7 +96,8 @@ standalone_config_vk_win = {
     "path_to_daily_monica_fbp_component": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
     "path_to_monica_parameters_dir": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
     "path_to_formind_exe": "E:/4Zalf_10102024_rcp26/formind.exe",
-    "path_to_full_weather_file": "E:/4Zalf_10102024_rcp26/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
+    "full_weather_path_pattern": "{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
+    "path_to_full_weather_dir": "E:/4Zalf_10102024_rcp26/weatherData",
     "path_to_grassmind_weather_file": "E:/4Zalf_10102024_rcp26/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
     "path_to_grassmind_soil_file": "E:/4Zalf_10102024_rcp26/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
     "path_to_grassmind_param_file": "E:/4Zalf_10102024_rcp26/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
@@ -92,10 +111,25 @@ async def main(config: dict):
     channels = []
     procs = []
 
-    row = int(config["row"])
-    col = int(config["col"])
+    slurm_task_id = os.getenv("SLURM_ARRAY_TASK_ID", None)
+    if slurm_task_id:
+        # iterate the weather file folder
+        dir_ = config["path_to_full_weather_dir"]
+        all_weather_files = []
+        for path, folders, files in os.walk(dir_):
+            if len(files) > 0:
+                all_weather_files.extend([os.path.join(path, f) for f in files if f.endswith(".csv")])
+        #print("no of weather files:", len(all_weather_files))
+        all_weather_files.sort()
+        selected_file = all_weather_files[int(slurm_task_id) - 1]
+        row = int(selected_file[-7:-4])
+        col = int(selected_file[-11:-8])
+    else:
+        row = int(config["row"])
+        col = int(config["col"])
+
     paths = {
-        "full_weather": config["path_to_full_weather_file"].format(row=row, col=col),
+        "full_weather": os.path.join(config["path_to_full_weather_dir"], config["full_weather_path_pattern"].format(row=row, col=col)),
         "weather": config["path_to_grassmind_weather_file"].format(row=row, col=col),
         "soil": config["path_to_grassmind_soil_file"].format(row=row, col=col),
         "params": config["path_to_grassmind_param_file"].format(row=row, col=col),
@@ -121,9 +155,9 @@ async def main(config: dict):
         channels.append(chans.start_channel(config["path_to_channel"],
                                             "serialized_state_out", first_writer_sr, name="serialized_state"))
         channels.append(chans.start_channel(config["path_to_channel"],
-                                            "port_infos", first_writer_sr, name="port_infos",
-                                            port=9991,
-                                            reader_srts="r_in"))
+                                            "port_infos", first_writer_sr, name="port_infos"))#,
+                                            #port=9991,
+                                            #reader_srts="r_in"))
 
         port_srs = {"in": {}, "out": {}}
         port_infos_reader_sr = None
@@ -144,9 +178,12 @@ async def main(config: dict):
                 port_name = c_id[:-4]
                 out_ports.append({"name": port_name, "sr": info.writerSRs[0]})
                 port_srs["out"][port_name] = info.readerSRs[0]
-            else:
+            elif c_id == "port_infos":
                 port_infos_writer = await con_man.try_connect(info.writerSRs[0], cast_as=fbp_capnp.Channel.Writer)
                 port_infos_reader_sr = info.readerSRs[0]
+            else:
+                print("Error received unknown channel startupInfo with id:", c_id)
+                exit(1)
         port_infos_msg.inPorts = in_ports
         port_infos_msg.outPorts = out_ports
 
@@ -232,6 +269,10 @@ async def main(config: dict):
                 "../data/params/crops/residues/grass-ley.json")),
         }
         rel_events = {
+            #"03-01": create_sowing_event(monica_crop_service.Crop(
+            #    {"id": "Grass_Species4", "name": "Grass Species 4"}, "../data/params/crops/species/Grass_Species4.json",
+            #    {"id": "Grass_CLV4", "name": "Grass CLV 4"}, "../data/params/crops/cultivars/Grass_CLV4.json",
+            #    "../data/params/crops/residues/grass-ley.json")),
             "06-15": create_cutting_event([
                 {"organ": "leaf", "value": 0.15, "unit": "lai", "cutOrLeft": "left", "exportPercentage": 100.0},
                 {"organ": "shoot", "value": 100, "unit": "biomass", "cutOrLeft": "left", "exportPercentage": 100.0}]),
@@ -472,5 +513,6 @@ def create_cutting_event(cutting_spec: list[dict]):
 
 
 if __name__ == '__main__':
+    asyncio.run(capnp.run(main(standalone_config_rpm_hpc)))
     #asyncio.run(capnp.run(main(standalone_config_mbm_lin)))
-    asyncio.run(capnp.run(main(standalone_config_vk_win)))
+    #asyncio.run(capnp.run(main(standalone_config_vk_win)))
