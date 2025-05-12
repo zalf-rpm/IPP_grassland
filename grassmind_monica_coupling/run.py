@@ -144,10 +144,9 @@ async def main(config: dict):
     }
 
     # update the parameter file to run just for a single day
-    line_no = 1
     with fileinput.input(paths["params"], inplace=True) as f:
-        for line in f:
-            if line_no == 9:
+        for line_no, line in enumerate(f):
+            if line_no == 8:
                 print("float	TimeEnd		0.00274", end="")
             else:
                 print(line, end="")
