@@ -147,7 +147,7 @@ async def main(config: dict):
     with fileinput.input(paths["params"], inplace=True) as f:
         for line_no, line in enumerate(f):
             if line_no == 8:
-                print("float	TimeEnd		0.00274", end="")
+                print("float	TimeEnd		0.00274")
             else:
                 print(line, end="")
 
