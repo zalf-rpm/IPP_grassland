@@ -15,6 +15,7 @@
 
 import asyncio
 from datetime import date
+import fileinput
 import io
 import re
 import subprocess
@@ -141,6 +142,15 @@ async def main(config: dict):
         "div": config["path_to_result_div"].format(row=row, col=col, rcp=config["rcp"]),
         "bt": config["path_to_result_bt"].format(row=row, col=col, rcp=config["rcp"]),
     }
+
+    # update the parameter file to run just for a single day
+    line_no = 1
+    with fileinput.input(paths["params"], inplace=True) as f:
+        for line in f:
+            if line_no == 9:
+                print("float	TimeEnd		0.00274", end="")
+            else:
+                print(line, end="")
 
     try:
         first_chan, first_reader_sr, first_writer_sr = chans.start_first_channel(config["path_to_channel"])
