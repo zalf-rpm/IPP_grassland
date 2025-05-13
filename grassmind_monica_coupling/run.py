@@ -50,13 +50,12 @@ standalone_config_mbm_lin = {
     "col": "454", #"403",
     "rcp": "26",
     "start_year": "2021",
-    "end_year": "2098",
+    "end_year": "2023",
     "path_to_channel": "/home/berg/GitHub/monica/_cmake_debug/common/channel",
     "path_to_daily_monica_fbp_component": "/home/berg/GitHub/monica/_cmake_debug/daily-monica-fbp-component",
     "path_to_monica_parameters_dir": "/home/berg/GitHub/monica-parameters",
     "path_to_formind_exe": "/home/berg/GitHub/grassmind_zalf/_cmake_debug/formind",
-    "full_weather_path_pattern": "{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
-    "path_to_full_weather_dir": "/home/berg/Desktop/valeh/weatherData",
+    "path_to_full_weather_file": "/home/berg/Desktop/valeh/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
     "path_to_grassmind_weather_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
     "path_to_grassmind_soil_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
     "path_to_grassmind_param_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
@@ -73,8 +72,7 @@ standalone_config_rpm_hpc = {
     "path_to_daily_monica_fbp_component": "/home/rpm/start_manual_test_services/GitHub/monica/_cmake_release/daily-monica-fbp-component",
     "path_to_monica_parameters_dir": "/home/rpm/start_manual_test_services/GitHub/monica-parameters",
     "path_to_formind_exe": "/home/rpm/start_manual_test_services/GitHub/grassmind_zalf/src/formind",
-    "full_weather_path_pattern": "{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
-    "path_to_full_weather_dir": "/home/rpm/start_manual_test_services/grassmind_valeh/weatherData",
+    "path_to_full_weather_file": "/home/rpm/start_manual_test_services/grassmind_valeh/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
     "path_to_grassmind_weather_file": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
     "path_to_grassmind_soil_file": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
     "path_to_grassmind_param_file": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
@@ -91,8 +89,7 @@ standalone_config_mbm_win = {
     "path_to_daily_monica_fbp_component": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
     "path_to_monica_parameters_dir": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
     "path_to_formind_exe": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/formind.exe",
-    "full_weather_path_pattern": "{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
-    "path_to_full_weather_dir": "C:/Users/berg/Desktop/valeh/weatherData",
+    "path_to_full_weather_file": "C:/Users/berg/Desktop/valeh/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
     "path_to_grassmind_weather_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/formind_parameters\Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
     "path_to_grassmind_soil_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
     "path_to_grassmind_param_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
@@ -109,8 +106,7 @@ standalone_config_vk_win = {
     "path_to_daily_monica_fbp_component": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
     "path_to_monica_parameters_dir": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
     "path_to_formind_exe": "E:/4Zalf_10102024_rcp{rcp}/formind.exe",
-    "full_weather_path_pattern": "{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
-    "path_to_full_weather_dir": "E:/4Zalf_10102024_rcp26/weatherData",
+    "path_to_full_weather_file": "E:/4Zalf_10102024_rcp26/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
     "path_to_grassmind_weather_file": "E:/4Zalf_10102024_rcp{rcp}/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
     "path_to_grassmind_soil_file": "E:/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
     "path_to_grassmind_param_file": "E:/4Zalf_10102024_rcp{rcp}/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
@@ -124,25 +120,25 @@ async def main(config: dict):
     channels = []
     procs = []
 
-    slurm_task_id = os.getenv("SLURM_ARRAY_TASK_ID", None)
+    slurm_task_id = 5#os.getenv("SLURM_ARRAY_TASK_ID", None)
     if slurm_task_id:
         # iterate the weather file folder
-        dir_ = config["path_to_full_weather_dir"]
-        all_weather_files = []
-        for path, folders, files in os.walk(dir_):
-            if len(files) > 0:
-                all_weather_files.extend([os.path.join(path, f) for f in files if f.endswith(".csv")])
-        #print("no of weather files:", len(all_weather_files))
-        all_weather_files.sort()
-        selected_file = all_weather_files[int(slurm_task_id) - 1]
-        row = int(selected_file[-7:-4])
-        col = int(selected_file[-11:-8])
+        one_param_file = config["path_to_grassmind_param_file"].format(row=config["row"], col=config["col"], rcp=config["rcp"])
+        params_dir = os.path.dirname(one_param_file)
+        all_param_files = []
+        for entry in os.listdir(params_dir):
+            if entry.startswith("parameter_R") and entry.endswith("I41.par"):
+                all_param_files.append(os.path.join(params_dir, entry))
+        all_param_files.sort()
+        selected_file = all_param_files[int(slurm_task_id) - 1]
+        row = int(selected_file[-14:-11])
+        col = int(selected_file[-10:-7])
     else:
         row = int(config["row"])
         col = int(config["col"])
 
     paths = {
-        "full_weather": os.path.join(config["path_to_full_weather_dir"], config["full_weather_path_pattern"].format(row=row, col=col, rcp=config["rcp"])),
+        "full_weather": config["path_to_full_weather_file"].format(row=row, col=col, rcp=config["rcp"]),
         "weather": config["path_to_grassmind_weather_file"].format(row=row, col=col, rcp=config["rcp"]),
         "soil": config["path_to_grassmind_soil_file"].format(row=row, col=col, rcp=config["rcp"]),
         "params": config["path_to_grassmind_param_file"].format(row=row, col=col, rcp=config["rcp"]),
@@ -314,8 +310,12 @@ async def main(config: dict):
         }
 
         #print("wrote openBracket on event channel")
+        prev_year = None
         for day_index, iso_date in enumerate(iso_dates[:-365]):
             current_date = date.fromisoformat(iso_date)
+            if prev_year != current_date.year:
+                print(current_date.year, end=" ", flush=True)
+                prev_year = current_date.year
 
             await event_writer.write(value=fbp_capnp.IP.new_message(type="openBracket"))
 
