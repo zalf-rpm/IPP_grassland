@@ -372,7 +372,7 @@ async def main(config: dict):
 
             #print(iso_date, "biomass gm:", grassmind_total_biomass_kg_per_ha, "mo:", mo_biomass)
             # ⬇️ ADD THIS LINE TO SAVE TO A FILE
-            with open(f"output_biomass_R{row}C{col}.csv", "a") as f:
+            with open(f"output_biomass_RCP{config['rcp']}_R{row}C{col}.csv", "a") as f:
                 f.write(f"{iso_date},{mo_biomass}\n")
 
         await event_writer.close()
