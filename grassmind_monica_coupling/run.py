@@ -120,7 +120,7 @@ async def main(config: dict):
     channels = []
     procs = []
 
-    slurm_task_id = 5#os.getenv("SLURM_ARRAY_TASK_ID", None)
+    slurm_task_id = os.getenv("SLURM_ARRAY_TASK_ID", None)
     if slurm_task_id:
         # iterate the weather file folder
         one_param_file = config["path_to_grassmind_param_file"].format(row=config["row"], col=config["col"], rcp=config["rcp"])
