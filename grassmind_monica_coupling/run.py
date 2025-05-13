@@ -60,7 +60,8 @@ standalone_config_mbm_lin = {
     "path_to_grassmind_soil_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
     "path_to_grassmind_param_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
     "path_to_result_div": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.div",
-    "path_to_result_bt": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.bt"
+    "path_to_result_bt": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.bt",
+    "path_to_biomass_output_file": "biomass_outputs/biomass_rcp{rcp}_R{row}C{col}.csv",
 }
 standalone_config_rpm_hpc = {
     "row": "220",
@@ -77,7 +78,8 @@ standalone_config_rpm_hpc = {
     "path_to_grassmind_soil_file": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
     "path_to_grassmind_param_file": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
     "path_to_result_div": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.div",
-    "path_to_result_bt": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.bt"
+    "path_to_result_bt": "/home/rpm/start_manual_test_services/grassmind_valeh/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.bt",
+    "path_to_biomass_output_file": "biomass_outputs/biomass_rcp{rcp}_R{row}C{col}.csv",
 }
 standalone_config_mbm_win = {
     "row": "220",
@@ -94,7 +96,8 @@ standalone_config_mbm_win = {
     "path_to_grassmind_soil_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
     "path_to_grassmind_param_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
     "path_to_result_div": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.div",
-    "path_to_result_bt": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.bt"
+    "path_to_result_bt": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.bt",
+    "path_to_biomass_output_file": "biomass_outputs/biomass_rcp{rcp}_R{row}C{col}.csv",
 }
 standalone_config_vk_win = {
     "row": "220",
@@ -111,7 +114,8 @@ standalone_config_vk_win = {
     "path_to_grassmind_soil_file": "E:/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
     "path_to_grassmind_param_file": "E:/4Zalf_10102024_rcp{rcp}/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
     "path_to_result_div": "E:/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.div",
-    "path_to_result_bt": "E:/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.bt"
+    "path_to_result_bt": "E:/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.bt",
+    "path_to_biomass_output_file": "biomass_outputs/biomass_rcp{rcp}_R{row}C{col}.csv",
 }
 async def main(config: dict):
     common.update_config(config, sys.argv, print_config=True, allow_new_keys=False)
@@ -371,8 +375,9 @@ async def main(config: dict):
                print("received done on output channel")
 
             #print(iso_date, "biomass gm:", grassmind_total_biomass_kg_per_ha, "mo:", mo_biomass)
-            # ⬇️ ADD THIS LINE TO SAVE TO A FILE
-            with open(f"output_biomass_RCP{config['rcp']}_R{row}C{col}.csv", "a") as f:
+            if not os.path.exists(os.path.dirname(config["path_to_biomass_output_file"])):
+                os.makedirs(os.path.dirname(config["path_to_biomass_output_file"]))
+            with open(config["path_to_biomass_output_file"].format(rcp=config["rcp"], row=row, col=col), "a") as f:
                 f.write(f"{iso_date},{mo_biomass}\n")
 
         await event_writer.close()
