@@ -14,20 +14,18 @@
 # Copyright (C: Leibniz Centre for Agricultural Landscape Research (ZALF)
 
 import asyncio
+import capnp
 from datetime import date
 import fileinput
 import io
-import re
-import subprocess
-import time
-from collections import defaultdict
-import capnp
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess as sp
 import sys
-
+import time
+import uuid
 from zalfmas_common import common
 import zalfmas_capnp_schemas
 from zalfmas_services.crop import monica_crop_service
@@ -48,7 +46,7 @@ import monica_state_capnp
 standalone_config_mbm_lin = {
     "row": "220",
     "col": "454", #"403",
-    "rcp": "26",
+    "rcp": "85",
     "start_year": "2021",
     "end_year": "2023",
     "path_to_channel": "/home/berg/GitHub/monica/_cmake_debug/common/channel",
@@ -124,6 +122,7 @@ async def main(config: dict):
     channels = []
     procs = []
 
+    slurm_array_job_id = os.getenv("SLURM_ARRAY_JOB_ID", None)
     slurm_task_id = os.getenv("SLURM_ARRAY_TASK_ID", None)
     if slurm_task_id:
         # iterate the weather file folder
@@ -149,7 +148,39 @@ async def main(config: dict):
         "formind": config["path_to_formind_exe"].format(row=row, col=col, rcp=config["rcp"]),
         "div": config["path_to_result_div"].format(row=row, col=col, rcp=config["rcp"]),
         "bt": config["path_to_result_bt"].format(row=row, col=col, rcp=config["rcp"]),
+        "shm": f"/dev/shm/{uuid.uuid4()}/",
+        "biomass_out": config["path_to_biomass_output_file"].format(job_id=slurm_array_job_id,
+                                                                    rcp=config["rcp"], row=row, col=col)
     }
+
+    # copy grassmind files into ramdisk
+    if os.path.exists("/dev/shm/"):
+        os.makedirs(os.path.join(paths["shm"], "grassmind"))
+        params_dir = os.path.dirname(paths["params"])
+        shutil.copy(os.path.join(params_dir, "init41.pin"), os.path.join(paths["shm"], "grassmind"))
+        os.makedirs(os.path.join(paths["shm"], "grassmind", "Observation"))
+        shutil.copytree(os.path.join(params_dir, "Observation"), os.path.join(paths["shm"], "grassmind", "Observation"), dirs_exist_ok=True)
+        os.makedirs(os.path.join(paths["shm"], "grassmind", "Management"))
+        shutil.copytree(os.path.join(params_dir, "Management"), os.path.join(paths["shm"], "grassmind", "Management"), dirs_exist_ok=True)
+
+        os.makedirs(os.path.join(paths["shm"], "grassmind", "Climate"))
+        shutil.copy(paths["weather"], os.path.join(paths["shm"], "grassmind", "Climate"))
+        paths["weather"] = os.path.join(paths["shm"], "grassmind", "Climate", os.path.basename(paths["weather"]))
+        os.makedirs(os.path.join(paths["shm"], "grassmind", "Soil"))
+        shutil.copy(paths["soil"], os.path.join(paths["shm"], "grassmind", "Soil"))
+        paths["soil"] = os.path.join(paths["shm"], "grassmind", "Soil", os.path.basename(paths["soil"]))
+        shutil.copy(paths["params"], os.path.join(paths["shm"], "grassmind"))
+        paths["params"] = os.path.join(paths["shm"], "grassmind", os.path.basename(paths["params"]))
+
+        os.makedirs(os.path.join(paths["shm"], "results"), exist_ok=True)
+        paths["div"] = os.path.join(paths["shm"], "results", os.path.basename(paths["div"]))
+        paths["bt"] = os.path.join(paths["shm"], "results", os.path.basename(paths["bt"]))
+
+        os.makedirs(os.path.join(paths["shm"], "biomass_out"), exist_ok=True)
+        paths["biomass_out"] = os.path.join(paths["shm"], "biomass_out", os.path.basename(paths["biomass_out"]))
+
+    if not os.path.exists(os.path.dirname(paths["biomass_out"])):
+        os.makedirs(os.path.dirname(paths["biomass_out"]))
 
     # update the parameter file to run just for a single day
     with fileinput.input(paths["params"], inplace=True) as f:
@@ -215,7 +246,7 @@ async def main(config: dict):
             port_infos_reader_sr
         ], env={"MONICA_PARAMETERS": config["path_to_monica_parameters_dir"],
                 "systemroot": os.getenv("systemroot", "")},
-        stdout=subprocess.DEVNULL))
+        stdout=sp.DEVNULL))
 
         # write the config to the config channel
         await port_infos_writer.write(value=port_infos_msg)
@@ -318,7 +349,7 @@ async def main(config: dict):
         for day_index, iso_date in enumerate(iso_dates[:-365]):
             current_date = date.fromisoformat(iso_date)
             if prev_year != current_date.year:
-                print(current_date.year, end=" ", flush=True)
+                #print(current_date.year, end=" ", flush=True)
                 prev_year = current_date.year
 
             await event_writer.write(value=fbp_capnp.IP.new_message(type="openBracket"))
@@ -375,9 +406,7 @@ async def main(config: dict):
                print("received done on output channel")
 
             #print(iso_date, "biomass gm:", grassmind_total_biomass_kg_per_ha, "mo:", mo_biomass)
-            if not os.path.exists(os.path.dirname(config["path_to_biomass_output_file"])):
-                os.makedirs(os.path.dirname(config["path_to_biomass_output_file"]))
-            with open(config["path_to_biomass_output_file"].format(rcp=config["rcp"], row=row, col=col), "a") as f:
+            with open(paths["biomass_out"], "a") as f:
                 f.write(f"{iso_date},{mo_biomass}\n")
 
         await event_writer.close()
@@ -401,6 +430,12 @@ async def main(config: dict):
         for proc in procs:
             proc.terminate()
 
+    final_biomass_out_file = config["path_to_biomass_output_file"].format(job_id=slurm_array_job_id,
+                                                                          rcp=config["rcp"], row=row, col=col)
+    if not os.path.exists(os.path.dirname(final_biomass_out_file)):
+        os.makedirs(os.path.dirname(final_biomass_out_file))
+    shutil.copy(paths["biomass_out"], final_biomass_out_file)
+    shutil.rmtree(paths["shm"], ignore_errors=True)
 
 
 def run_grassmind_on_monica_state(old_state, day_index, grassmind_climate, paths):
@@ -425,7 +460,7 @@ def run_grassmind_on_monica_state(old_state, day_index, grassmind_climate, paths
     with open(paths["soil"], "wt") as f:
         f.write(create_grassmind_soil_from_state(old_state))
 
-    p = sp.Popen([paths["formind"], paths["params"]], stdout=subprocess.DEVNULL)
+    p = sp.Popen([paths["formind"], paths["params"]], stdout=sp.DEVNULL)
     p.wait()     #grassmind run
 
     # read .div file to get the current fractions
