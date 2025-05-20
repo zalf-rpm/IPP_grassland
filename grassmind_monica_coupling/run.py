@@ -180,7 +180,7 @@ async def main(config: dict):
         paths["biomass_out"] = os.path.join(paths["shm"], "biomass_out", os.path.basename(paths["biomass_out"]))
 
     if not os.path.exists(os.path.dirname(paths["biomass_out"])):
-        os.makedirs(os.path.dirname(paths["biomass_out"]))
+        os.makedirs(os.path.dirname(paths["biomass_out"]), exist_ok=True)
 
     # update the parameter file to run just for a single day
     with fileinput.input(paths["params"], inplace=True) as f:
@@ -433,7 +433,7 @@ async def main(config: dict):
     final_biomass_out_file = config["path_to_biomass_output_file"].format(job_id=slurm_array_job_id,
                                                                           rcp=config["rcp"], row=row, col=col)
     if not os.path.exists(os.path.dirname(final_biomass_out_file)):
-        os.makedirs(os.path.dirname(final_biomass_out_file))
+        os.makedirs(os.path.dirname(final_biomass_out_file), exist_ok=True)
     shutil.copy(paths["biomass_out"], final_biomass_out_file)
     shutil.rmtree(paths["shm"], ignore_errors=True)
 
