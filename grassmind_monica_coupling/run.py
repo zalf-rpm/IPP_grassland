@@ -578,6 +578,6 @@ def create_cutting_event(cutting_spec: list[dict]):
 
 
 if __name__ == '__main__':
-    asyncio.run(capnp.run(main(standalone_config_rpm_hpc)))
+    #asyncio.run(capnp.run(main(standalone_config_rpm_hpc)))
     #asyncio.run(capnp.run(main(standalone_config_mbm_lin)))
-    #asyncio.run(capnp.run(main(standalone_config_vk_win)))
+    asyncio.run(capnp.run(main(standalone_config_vk_win)))
