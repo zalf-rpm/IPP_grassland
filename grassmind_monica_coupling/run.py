@@ -44,8 +44,8 @@ import monica_params_capnp
 import monica_state_capnp
 
 standalone_config_mbm_lin = {
-    "row": "220",
-    "col": "454", #"403",
+    "row": "230",#220,c454
+    "col": "423", #"403",
     "rcp": "85",
     "start_year": "2021",
     "end_year": "2023",
@@ -405,7 +405,7 @@ async def main(config: dict):
             else:
                print("received done on output channel")
 
-            #print(iso_date, "biomass gm:", grassmind_total_biomass_kg_per_ha, "mo:", mo_biomass)
+            print(iso_date, "biomass gm:", grassmind_total_biomass_kg_per_ha, "mo:", mo_biomass)
             with open(paths["biomass_out"], "a") as f:
                 f.write(f"{iso_date},{mo_biomass}\n")
 
@@ -578,6 +578,6 @@ def create_cutting_event(cutting_spec: list[dict]):
 
 
 if __name__ == '__main__':
-    asyncio.run(capnp.run(main(standalone_config_rpm_hpc)))
+    #asyncio.run(capnp.run(main(standalone_config_rpm_hpc)))
     #asyncio.run(capnp.run(main(standalone_config_mbm_lin)))
-    #asyncio.run(capnp.run(main(standalone_config_vk_win)))
+    asyncio.run(capnp.run(main(standalone_config_vk_win)))

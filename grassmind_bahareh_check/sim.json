@@ -12,7 +12,7 @@
 
 	"debug?": false,
 	"path-to-output": ".",
-	"include-file-base-path": "params/",
+	"include-file-base-path": "C:/Users/khaledi/Documents/GitHub/IPP_grassland/grassmind_bahareh_check/params/", 
 	
 	"output": { 
 	  "write-file?": true,
@@ -57,6 +57,7 @@
 	"WaterDeficitResponseOn": true,
 	"EmergenceMoistureControlOn": false,
 	"EmergenceFloodingControlOn": false,
+	"FrostKillOn": false,
 
 	"UseAutomaticIrrigation": false,
 	"AutoIrrigationParams": {

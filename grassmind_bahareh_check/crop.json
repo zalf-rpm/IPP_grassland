@@ -12,7 +12,7 @@
     "fert-params": {
 		"AN": ["include-from-file", "mineral-fertilisers/AN.json"]
 	},
-    "_cropRotation": [
+    "cropRotation": [
         {
             "worksteps": [
                 {
@@ -138,7 +138,7 @@
             ]
         }
     ],
-    "cropRotations": [
+    "alternative_way_to_sow_just_once_cropRotations": [
         {
             "start": "2021-01-01",
             "end": "2021-03-01",
