@@ -163,35 +163,56 @@ async def main(config: dict):
     # copy grassmind files into ramdisk
     if os.path.exists("/dev/shm/"):
         os.makedirs(os.path.join(paths["shm"], "grassmind"))
+
+        # copy formind executable to speed up execution
         shutil.copy(paths["formind"], os.path.join(paths["shm"], "grassmind"))
         paths["formind"] = os.path.join(paths["shm"], "grassmind", "formind")
 
+        # copy lat/lon to row/col to soil_id file
         shutil.copy(paths["lat_lon_soil"], paths["shm"])
         paths["lat_lon_soil"] = os.path.join(paths["shm"], os.path.basename(paths["lat_lon_soil"]))
 
         params_dir = os.path.dirname(paths["params"])
+        # copy pin file
         shutil.copy(os.path.join(params_dir, "init41.pin"), os.path.join(paths["shm"], "grassmind"))
+
+        # create and copy observation folder
         os.makedirs(os.path.join(paths["shm"], "grassmind", "Observation"))
         shutil.copytree(os.path.join(params_dir, "Observation"), os.path.join(paths["shm"], "grassmind", "Observation"), dirs_exist_ok=True)
+
+        # create and copy management folder
         os.makedirs(os.path.join(paths["shm"], "grassmind", "Management"))
         shutil.copytree(os.path.join(params_dir, "Management"), os.path.join(paths["shm"], "grassmind", "Management"), dirs_exist_ok=True)
 
+        # weather data file will be created from full weather data
         os.makedirs(os.path.join(paths["shm"], "grassmind", "Climate"))
-        shutil.copy(paths["weather"], os.path.join(paths["shm"], "grassmind", "Climate"))
+        #shutil.copy(paths["weather"], os.path.join(paths["shm"], "grassmind", "Climate"))
+        # update path to weather file to be created
         paths["weather"] = os.path.join(paths["shm"], "grassmind", "Climate", os.path.basename(paths["weather"]))
+
+        # soil data file will be created from MONICA soil
         os.makedirs(os.path.join(paths["shm"], "grassmind", "Soil"))
-        shutil.copy(paths["soil"], os.path.join(paths["shm"], "grassmind", "Soil"))
+        #shutil.copy(paths["soil"], os.path.join(paths["shm"], "grassmind", "Soil"))
+        # update path to the soil file to be created
         paths["soil"] = os.path.join(paths["shm"], "grassmind", "Soil", os.path.basename(paths["soil"]))
+
+        # copy params file
         shutil.copy(paths["params"], os.path.join(paths["shm"], "grassmind"))
+        # update path to params file
         paths["params"] = os.path.join(paths["shm"], "grassmind", os.path.basename(paths["params"]))
 
+        # create results dir
         os.makedirs(os.path.join(paths["shm"], "results"), exist_ok=True)
+        # update path to the two grasssmind output files
         paths["div"] = os.path.join(paths["shm"], "results", os.path.basename(paths["div"]))
         paths["bt"] = os.path.join(paths["shm"], "results", os.path.basename(paths["bt"]))
 
+        # create biomass output folder
         os.makedirs(os.path.join(paths["shm"], "biomass_out"), exist_ok=True)
+        # update path to biomass file to be created
         paths["biomass_out"] = os.path.join(paths["shm"], "biomass_out", os.path.basename(paths["biomass_out"]))
 
+    # create biomass output folder (in case of linux and shm already happend)
     if not os.path.exists(os.path.dirname(paths["biomass_out"])):
         os.makedirs(os.path.dirname(paths["biomass_out"]), exist_ok=True)
 
