@@ -227,13 +227,17 @@ async def main(config: dict):
     # create soil profile
     soil_db_con = sqlite3.connect("../data/germany/buek200.sqlite")
     soil_profile = None
+    soil_id = None
+    soil_id_exists = False
     with open(paths["lat_lon_soil"], "r") as f:
-        for lat_lon, row_col, soil_id in json.load(f):
+        for lat_lon, row_col, soil_id_ in json.load(f):
             if row_col == [row, col]:
-                soil_profile = soil_io.soil_parameters(soil_db_con, soil_id[0])
+                soil_id = soil_id_[0]
+                soil_id_exists = True
+                soil_profile = soil_io.soil_parameters(soil_db_con, soil_id)
                 break
     if not soil_profile:
-        print("no soil profile found for row/col:", row, "/", col)
+        print("no soil profile found for row/col:", row, "/", col, "soil_id:", soil_id if soil_id_exists else "-")
         exit(0)
 
     try:
