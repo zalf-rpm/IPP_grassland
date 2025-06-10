@@ -234,7 +234,22 @@ async def main(config: dict):
             if row_col == [row, col]:
                 soil_id = soil_id_[0]
                 soil_id_exists = True
-                soil_profile = soil_io.soil_parameters(soil_db_con, soil_id)
+                #soil_profile = soil_io.soil_parameters(soil_db_con, soil_id)
+                soil_profile_group = soil_io.get_soil_profile_group(soil_db_con, soil_id)
+                if len(soil_profile_group) > 0 and len(soil_profile_group[0]) > 0:
+                    most_layers = {"layers": None, "no": 0}
+                    for p in soil_profile_group[0][1]:
+                        if p["id"] == 1:
+                            soil_profile = p["layers"]
+                            break
+                        else:
+                            if len(p["layers"]) > most_layers["no"]:
+                                most_layers["layers"] = p["layers"]
+                                most_layers["no"] = len(p["layers"])
+                    if not soil_profile and most_layers["layers"]:
+                        soil_profile = most_layers["layers"]
+                    else:
+                        break
                 break
     if not soil_profile:
         print("no soil profile found for row/col:", row, "/", col, "soil_id:", soil_id if soil_id_exists else "-")
