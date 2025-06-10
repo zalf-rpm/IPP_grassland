@@ -156,6 +156,9 @@ async def main(config: dict):
     # copy grassmind files into ramdisk
     if os.path.exists("/dev/shm/"):
         os.makedirs(os.path.join(paths["shm"], "grassmind"))
+        shutil.copy(paths["formind"], os.path.join(paths["shm"], "grassmind"))
+        paths["formind"] = os.path.join(paths["shm"], "grassmind", "formind")
+        print("path to formind:", paths["formind"])
         params_dir = os.path.dirname(paths["params"])
         shutil.copy(os.path.join(params_dir, "init41.pin"), os.path.join(paths["shm"], "grassmind"))
         os.makedirs(os.path.join(paths["shm"], "grassmind", "Observation"))
