@@ -22,6 +22,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import sqlite3
 import subprocess as sp
 import sys
 import time
@@ -30,6 +31,7 @@ from zalfmas_common import common
 import zalfmas_capnp_schemas
 from zalfmas_services.crop import monica_crop_service
 from zalfmas_common.model import monica_io
+from zalfmas_common.soil import soil_io
 from zalfmas_fbp.run import channels as chans, ports as fbp_ports
 capnp_path = Path(os.path.dirname(zalfmas_capnp_schemas.__file__))
 sys.path.append(str(capnp_path))
@@ -53,6 +55,7 @@ standalone_config_mbm_lin = {
     "path_to_daily_monica_fbp_component": "/home/berg/GitHub/monica/_cmake_debug/daily-monica-fbp-component",
     "path_to_monica_parameters_dir": "/home/berg/GitHub/monica-parameters",
     "path_to_formind_exe": "/home/berg/GitHub/grassmind_zalf/_cmake_debug/formind",
+    "path_to_lat_lon_soil_json": "/home/berg/Desktop/valeh/GRASSMIND/latlon_to_rowcol_with_soilmap.json",
     "path_to_full_weather_file": "/home/berg/Desktop/valeh/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
     "path_to_grassmind_weather_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
     "path_to_grassmind_soil_file": "/home/berg/Desktop/valeh/GRASSMIND/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
@@ -71,12 +74,13 @@ standalone_config_rpm_hpc = {
     "path_to_daily_monica_fbp_component": "/beegfs/common/data/grassmind/monica/_cmake_release/daily-monica-fbp-component",
     "path_to_monica_parameters_dir": "/beegfs/common/data/grassmind/monica-parameters",
     "path_to_formind_exe": "/beegfs/common/data/grassmind/grassmind_zalf/src/formind",
-    "path_to_full_weather_file": "/beegfs/common/data/grassmind/4Zalf_10102024_rcp{rcp}/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
-    "path_to_grassmind_weather_file": "/beegfs/common/data/grassmind/4Zalf_10102024_rcp{rcp}/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
-    "path_to_grassmind_soil_file": "/beegfs/common/data/grassmind/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
-    "path_to_grassmind_param_file": "/beegfs/common/data/grassmind/4Zalf_10102024_rcp{rcp}/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
-    "path_to_result_div": "/beegfs/common/data/grassmind/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.div",
-    "path_to_result_bt": "/beegfs/common/data/grassmind/4Zalf_10102024_rcp{rcp}/results/parameter_R{row:03}C{col:03}I41.bt",
+    "path_to_lat_lon_soil_json": "/beegfs/common/data/grassmind/data/latlon_to_rowcol_with_soilmap.json",
+    "path_to_full_weather_file": "/beegfs/common/data/grassmind/data/weather_data/rcp_{rcp}/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
+    "path_to_grassmind_weather_file": "/beegfs/common/data/grassmind/data/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
+    "path_to_grassmind_soil_file": "/beegfs/common/data/grassmind/data/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
+    "path_to_grassmind_param_file": "/beegfs/common/data/grassmind/data/formind_parameters/parameter_R{row:03}C{col:03}I41.par",
+    "path_to_result_div": "/beegfs/common/data/grassmind/data/results/parameter_R{row:03}C{col:03}I41.div",
+    "path_to_result_bt": "/beegfs/common/data/grassmind/data/results/parameter_R{row:03}C{col:03}I41.bt",
     "path_to_biomass_output_file": "biomass_outputs/biomass_rcp{rcp}_R{row}C{col}.csv",
 }
 standalone_config_mbm_win = {
@@ -89,6 +93,7 @@ standalone_config_mbm_win = {
     "path_to_daily_monica_fbp_component": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
     "path_to_monica_parameters_dir": "C:/Users/berg/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
     "path_to_formind_exe": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/formind.exe",
+    "path_to_lat_lon_soil_json": "C:/Users/berg/Desktop/valeh/latlon_to_rowcol_with_soilmap.json",
     "path_to_full_weather_file": "C:/Users/berg/Desktop/valeh/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
     "path_to_grassmind_weather_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/formind_parameters\Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
     "path_to_grassmind_soil_file": "C:/Users/berg/Desktop/valeh/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
@@ -107,6 +112,7 @@ standalone_config_vk_win = {
     "path_to_daily_monica_fbp_component": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/bin/daily-monica-fbp-component.exe",
     "path_to_monica_parameters_dir": "C:/Users/khaledi/development/monica_win64_3.6.36.daily_fbp_component/monica-parameters",
     "path_to_formind_exe": "E:/4Zalf_10102024_rcp{rcp}/formind.exe",
+    "path_to_lat_lon_soil_json": "E:/4Zalf_10102024_rcp{rcp}/latlon_to_rowcol_with_soilmap.json",
     "path_to_full_weather_file": "E:/4Zalf_10102024_rcp26/weatherData/{row:03}/daily_mean_RES1_C{col:03}R{row:03}.csv",
     "path_to_grassmind_weather_file": "E:/4Zalf_10102024_rcp{rcp}/formind_parameters/Climate/daily_mean_RES1_C{col:03}R{row:03}.csv_Grassmind.txt",
     "path_to_grassmind_soil_file": "E:/4Zalf_10102024_rcp{rcp}/formind_parameters/Soil/soil_R{row:03}C{col:03}.txt",
@@ -150,7 +156,8 @@ async def main(config: dict):
         "bt": config["path_to_result_bt"].format(row=row, col=col, rcp=config["rcp"]),
         "shm": f"/dev/shm/{uuid.uuid4()}/",
         "biomass_out": config["path_to_biomass_output_file"].format(job_id=slurm_array_job_id,
-                                                                    rcp=config["rcp"], row=row, col=col)
+                                                                    rcp=config["rcp"], row=row, col=col),
+        "lat_lon_soil": config["path_to_lat_lon_soil_json"],
     }
 
     # copy grassmind files into ramdisk
@@ -158,7 +165,10 @@ async def main(config: dict):
         os.makedirs(os.path.join(paths["shm"], "grassmind"))
         shutil.copy(paths["formind"], os.path.join(paths["shm"], "grassmind"))
         paths["formind"] = os.path.join(paths["shm"], "grassmind", "formind")
-        print("path to formind:", paths["formind"])
+
+        shutil.copy(paths["lat_lon_soil"], paths["shm"])
+        paths["lat_lon_soil"] = os.path.join(paths["shm"], os.path.basename(paths["lat_lon_soil"]))
+
         params_dir = os.path.dirname(paths["params"])
         shutil.copy(os.path.join(params_dir, "init41.pin"), os.path.join(paths["shm"], "grassmind"))
         os.makedirs(os.path.join(paths["shm"], "grassmind", "Observation"))
@@ -192,6 +202,18 @@ async def main(config: dict):
                 print("float	TimeEnd		0.00274")
             else:
                 print(line, end="")
+
+    # create soil profile
+    soil_db_con = sqlite3.connect("../data/germany/buek200.sqlite")
+    soil_profile = None
+    with open(paths["lat_lon_soil"], "r") as f:
+        for lat_lon, row_col, soil_id in json.load(f):
+            if row_col == [row, col]:
+                soil_profile = soil_io.soil_parameters(soil_db_con, soil_id[0])
+                break
+    if not soil_profile:
+        print("no soil profile found for row/col:", row, "/", col)
+        exit(0)
 
     try:
         first_chan, first_reader_sr, first_writer_sr = chans.start_first_channel(config["path_to_channel"])
@@ -258,6 +280,7 @@ async def main(config: dict):
             sim_json = json.load(_)
         with open("site.json") as _:
             site_json = json.load(_)
+            site_json["SiteParameters"]["SoilProfileParameters"] = soil_profile
         with open("crop.json") as _:
             crop_json = json.load(_)
         env_template = monica_io.create_env_json_from_json_config({
