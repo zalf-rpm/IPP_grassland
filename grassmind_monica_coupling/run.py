@@ -471,7 +471,7 @@ async def main(config: dict):
             else:
                print("received done on output channel")
 
-            print(iso_date, "biomass gm:", grassmind_total_biomass_kg_per_ha, "mo:", mo_biomass)
+            #print(iso_date, "biomass gm:", grassmind_total_biomass_kg_per_ha, "mo:", mo_biomass)
             with open(paths["biomass_out"], "a") as f:
                 f.write(f"{iso_date},{mo_biomass}\n")
 
