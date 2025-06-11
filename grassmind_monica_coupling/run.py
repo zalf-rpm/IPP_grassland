@@ -390,16 +390,16 @@ async def main(config: dict):
 
         # create monica crop
         abs_events = {
-            #"2021-03-01": create_sowing_event(monica_crop_service.Crop(
-            #    {"id": "Grass_Species4", "name": "Grass Species 4"}, "../data/params/crops/species/Grass_Species4.json",
-            #    {"id": "Grass_CLV4", "name": "Grass CLV 4"}, "../data/params/crops/cultivars/Grass_CLV4.json",
-            #    "../data/params/crops/residues/grass-ley.json")),
-        }
-        rel_events = {
-            "03-01": create_sowing_event(monica_crop_service.Crop(
+            "2021-03-01": create_sowing_event(monica_crop_service.Crop(
                 {"id": "Grass_Species4", "name": "Grass Species 4"}, "../data/params/crops/species/Grass_Species4.json",
                 {"id": "Grass_CLV4", "name": "Grass CLV 4"}, "../data/params/crops/cultivars/Grass_CLV4.json",
                 "../data/params/crops/residues/grass-ley.json")),
+        }
+        rel_events = {
+            #"03-01": create_sowing_event(monica_crop_service.Crop(
+            #    {"id": "Grass_Species4", "name": "Grass Species 4"}, "../data/params/crops/species/Grass_Species4.json",
+            #    {"id": "Grass_CLV4", "name": "Grass CLV 4"}, "../data/params/crops/cultivars/Grass_CLV4.json",
+            #    "../data/params/crops/residues/grass-ley.json")),
             "06-15": create_cutting_event([
                 {"organ": "leaf", "value": 0.15, "unit": "lai", "cutOrLeft": "left", "exportPercentage": 100.0},
                 {"organ": "shoot", "value": 100, "unit": "biomass", "cutOrLeft": "left", "exportPercentage": 100.0}]),
