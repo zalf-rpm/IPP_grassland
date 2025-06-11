@@ -46,6 +46,7 @@ import monica_params_capnp
 import monica_state_capnp
 
 standalone_config_mbm_lin = {
+    "task_id_offset": "0",
     "row": "230",#220,c454
     "col": "423", #"403",
     "rcp": "85",
@@ -65,6 +66,7 @@ standalone_config_mbm_lin = {
     "path_to_biomass_output_file": "biomass_outputs/biomass_rcp{rcp}_R{row}C{col}.csv",
 }
 standalone_config_rpm_hpc = {
+    "task_id_offset": "0",
     "row": "220",
     "col": "454", #"403",
     "rcp": "26",
@@ -84,6 +86,7 @@ standalone_config_rpm_hpc = {
     "path_to_biomass_output_file": "biomass_outputs/biomass_rcp{rcp}_R{row}C{col}.csv",
 }
 standalone_config_mbm_win = {
+    "task_id_offset": "0",
     "row": "220",
     "col": "403",
     "rcp": "26",
@@ -103,6 +106,7 @@ standalone_config_mbm_win = {
     "path_to_biomass_output_file": "biomass_outputs/biomass_rcp{rcp}_R{row}C{col}.csv",
 }
 standalone_config_vk_win = {
+    "task_id_offset": "0",
     "row": "220",
     "col": "403",
     "rcp": "26",
@@ -130,6 +134,7 @@ async def main(config: dict):
 
     slurm_array_job_id = os.getenv("SLURM_ARRAY_JOB_ID", None)
     slurm_task_id = os.getenv("SLURM_ARRAY_TASK_ID", None)
+    task_id_offset = int(config["task_id_offset"])
     if slurm_task_id:
         # iterate the weather file folder
         one_param_file = config["path_to_grassmind_param_file"].format(row=config["row"], col=config["col"], rcp=config["rcp"])
@@ -139,7 +144,7 @@ async def main(config: dict):
             if entry.startswith("parameter_R") and entry.endswith("I41.par"):
                 all_param_files.append(os.path.join(params_dir, entry))
         all_param_files.sort()
-        selected_file = all_param_files[int(slurm_task_id) - 1]
+        selected_file = all_param_files[int(slurm_task_id) + task_id_offset - 1]
         row = int(selected_file[-14:-11])
         col = int(selected_file[-10:-7])
     else:
