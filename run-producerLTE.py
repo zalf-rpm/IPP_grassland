@@ -110,11 +110,11 @@ TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
 TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv"
 
 # Additional data for masking the regions
-NUTS3_REGIONS = "data/germany/NUTS_RG_03M_25832.shp"
+NUTS1_REGIONS = "data/germany/NUTS250_N1.shp"
 
 TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/ILR_SEED_HARVEST_doys_{crop_id}.csv"
 
-gdf = gpd.read_file(NUTS3_REGIONS)
+gdf = gpd.read_file(NUTS1_REGIONS)
 
 DEBUG_DONOT_SEND = False
 DEBUG_WRITE = False
@@ -290,8 +290,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # Create the function for the mask. This function will later use the additional column in a setup file!
 
-    def create_mask_from_shapefile(NUTS3_REGIONS, region_name, path_to_soil_grid):
-        regions_df = gpd.read_file(NUTS3_REGIONS)
+    def create_mask_from_shapefile(NUTS1_REGIONS, region_name, path_to_soil_grid):
+        regions_df = gpd.read_file(NUTS1_REGIONS)
         region = regions_df[regions_df["NUTS_NAME"] == region_name]
 
         # This is needed to read the transformation data correctly from the file. With the original opening it does not work
@@ -332,7 +332,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         if region_name and len(region_name) > 0:
             # Create the soil mask for the specific region
             path_to_soil_grid_ow = paths["path-to-data-dir"] + DATA_GRID_SOIL
-            mask = create_mask_from_shapefile(NUTS3_REGIONS, region_name, path_to_soil_grid_ow)
+            mask = create_mask_from_shapefile(NUTS1_REGIONS, region_name, path_to_soil_grid_ow)
 
             # Apply the soil mask to the soil grid
             soil_grid_copy = soil_grid.copy()
