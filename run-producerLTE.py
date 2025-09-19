@@ -139,10 +139,10 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "start-row": "0",
         "end-row": "-1",
         "path_to_dem_grid": "",
-        "sim.json": "sim.json",
-        "crop.json": "crop.json",
-        "site.json": "site.json",
-        "setups-file": "sim_setups_VK.csv",
+        "sim.json": "simLTE.json",
+        "crop.json": "cropLTE.json",
+        "site.json": "siteLTE.json",
+        "setups-file": "sim_setups_LTE.csv",
         "run-setups": "[1]",
         "shared_id": shared_id
     }
