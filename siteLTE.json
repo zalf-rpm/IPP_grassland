@@ -4,29 +4,10 @@
     "Slope": 0,
     "HeightNN": [0 , "m"],
     "NDeposition": 30,
-    "pwpFcSatFunction": "Wessolek2009",
+    
 		
-    "SoilProfileParameters": [
-      {
-        "Thickness": [0.3, "m"],
-        "SoilOrganicCarbon": [0.8, "%"],
-        "KA5TextureClass": "Sl2",
-        "SoilRawDensity": [1446, "kg m-3"]
-      },
-      {
-        "Thickness": 0.1,
-        "SoilOrganicCarbon": [0.15, "%"],
-        "KA5TextureClass": "Sl2",
-        "SoilRawDensity": [1446, "kg m-3"]
-      },
-      {
-        "Thickness": 1.6,
-        "SoilOrganicCarbon": [0.05, "%"],
-        "KA5TextureClass": "Sl2",
-        "SoilRawDensity": [1446, "kg m-3"]
-      }
-    ]
-  },
+    "SoilProfileParameters": []
+     },
 	
   "SoilTemperatureParameters": ["include-from-file", "general/soil-temperature.json"],
 	"EnvironmentParameters": {
