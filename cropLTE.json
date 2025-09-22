@@ -155,13 +155,13 @@
     ],
     "cropRotations": [
         {
-            "start": "2021-01-01",
-            "end": "2021-03-01",
+            "start": "1998-01-01",
+            "end": "1998-03-01",
             "cropRotation":[
                 {
                     "worksteps": [
                         {
-                            "date": "2021-03-01",
+                            "date": "1998-03-01",
                             "type": "Sowing",
                             "crop": ["ref", "crops", "RYE"]
                         }
@@ -170,8 +170,8 @@
             ]
         },
         {
-            "start": "2021-03-02",
-            "end": "2042-12-31",
+            "start": "1998-03-02",
+            "end": "2019-12-31",
             "cropRotation": [
                 {
                     "worksteps": [
