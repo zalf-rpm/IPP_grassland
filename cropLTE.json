@@ -4,7 +4,8 @@
         "RYE": {
             "is-winter-crop": false,
             "cropParams": {
-                "species": ["include-from-file", "crops/species/Grass_Species4.json"],
+                "species":  {
+    "=": ["include-from-file", "crops/species/Grass_Species4.json"], "FieldConditionModifier": 1},
                 "cultivar": ["include-from-file", "crops/cultivars/Grass_CLV4.json"]
             },
             "residueParams": ["include-from-file", "crops/residues/grass-ley.json"]
