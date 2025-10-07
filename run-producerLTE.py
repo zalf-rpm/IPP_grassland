@@ -550,10 +550,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 if setup["O3"]:
                     env_template["params"]["userEnvironmentParameters"]["AtmosphericO3"] = float(setup["O3"])
 
-                if setup.get("FieldConditionModifier") is not None:
-                    crop_name = env_template["cropRotation"][0]["worksteps"][0]["crop"][2]  # e.g., "RYE"
-                    env_template["crops"][crop_name]["cropParams"]["species"]["FieldConditionModifier"] = float(setup["FieldConditionModifier"])
-                    
+                if setup["FieldConditionModifier"]:
+                    env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"]["FieldConditionModifier"] = float(setup["FieldConditionModifier"])
+
                 if setup["StageTemperatureSum"]:
                     stage_ts = setup["StageTemperatureSum"].split('_')
                     stage_ts = [int(temp_sum) for temp_sum in stage_ts]
